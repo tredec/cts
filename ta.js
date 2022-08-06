@@ -998,7 +998,7 @@ class T4 {
 			let costs = [
 				c1WithWeight < c2cost ? c1WithWeight : veryBigNumber,
 				c2cost * k.max(1),
-				this.c3.cost.getCost(this.c3.level + this.scheduledLevels[2]) * p,
+				this.c3.cost.getCost(this.c3.level + this.scheduledLevels[2]),
 				q1WithWeight < q2cost ? q1WithWeight : veryBigNumber,
 				q2cost * 1.7
 			];
