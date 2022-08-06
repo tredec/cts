@@ -996,8 +996,8 @@ class T4 {
 			let q2cost = this.q2.cost.getCost(this.q2.level + this.scheduledLevels[4]);
 
 			let costs = [
-				veryBigNumber,
-				veryBigNumber,
+				c1WithWeight < c2cost ? c1WithWeight : veryBigNumber,
+				c2cost * k.max(1),
 				this.c3.cost.getCost(this.c3.level + this.scheduledLevels[2]),
 				q1WithWeight < q2cost ? q1WithWeight : veryBigNumber,
 				q2cost * 1.7
@@ -1151,7 +1151,7 @@ class T4 {
 
 		if (buyMax(this.c2, this.theory.currencies[0].value * p)) schedulerRefresh = true;
 		if (buyMax(this.c1, upgradeCost(this.c2) / 10)) schedulerRefresh = true;
-		if (buyMax(this.c3, this.theory.currencies[0].value * k)) schedulerRefresh = true;
+		if (buyMax(this.c3, this.theory.currencies[0].value)) schedulerRefresh = true;
 		if (buyMax(this.q2, upgradeCost(this.c3) / this.q2weight)) schedulerRefresh = true;
 		if (buyMax(this.q1, upgradeCost(this.c3).min(upgradeCost(this.q2)) / 10)) schedulerRefresh = true;
 
