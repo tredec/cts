@@ -37,7 +37,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_1=" + getC1(level).toString(0);
         let getInfo = (level) => "c_1=" + getC1(level).toString(0);
-        c1 = theory.createUpgrade(0, currency, new FirstFreeCost(new ExponentialCost(1, Math.log2(1.0000001))));
+        c1 = theory.createUpgrade(0, currency, new FirstFreeCost(new ExponentialCost(1, Math.log2(1.2))));
         c1.getDescription = (amount) => Utils.getMath(getDesc(c1.level));
         c1.getInfo = (amount) => Utils.getMathTo(getInfo(c1.level), getInfo(c1.level + amount));
     }
@@ -46,7 +46,7 @@ var init = () => {
     {
         let getDesc = (level) => "A=" + getA(level).toString(0);
         let getInfo = (level) => "A=" + getA(level).toString(0);
-        A = theory.createUpgrade(1, currency, new ExponentialCost(1000, 7));
+        A = theory.createUpgrade(1, currency, new ExponentialCost(1000, Math.log2(1.1)));
         A.getDescription = (amount) => Utils.getMath(getDesc(A.level));
         A.getInfo = (amount) => Utils.getMathTo(getInfo(A.level), getInfo(A.level + amount));
         A.bought = (_) => updateObject_flag = true;
@@ -56,7 +56,7 @@ var init = () => {
     {
         let getDesc = (level) => "B=" + getB(level).toString(0);
         let getInfo = (level) => "B=" + getB(level).toString(0);
-        B = theory.createUpgrade(2, currency, new ExponentialCost(10000, 7*2.2));
+        B = theory.createUpgrade(2, currency, new ExponentialCost(10000, Math.log2(1.1)));
         B.getDescription = (amount) => Utils.getMath(getDesc(B.level));
         B.getInfo = (amount) => Utils.getMathTo(getInfo(B.level), getInfo(B.level + amount));
         B.bought = (_) => updateObject_flag = true;
@@ -66,7 +66,7 @@ var init = () => {
     {
         let getDesc = (level) => "C=" + getC(level).toString(0);
         let getInfo = (level) => "C=" + getC(level).toString(0);
-        C = theory.createUpgrade(3, currency, new ExponentialCost(1e10, 7*3.5));
+        C = theory.createUpgrade(3, currency, new ExponentialCost(1e10, Math.log2(1.1)));
         C.getDescription = (amount) => Utils.getMath(getDesc(C.level));
         C.getInfo = (amount) => Utils.getMathTo(getInfo(C.level), getInfo(C.level + amount));
         C.bought = (_) => updateObject_flag = true;
@@ -76,7 +76,7 @@ var init = () => {
     {
         let getDesc = (level) => "D=" + getD(level).toString(0)
         let getInfo = (level) => "D=" + getD(level).toString(0);
-        D = theory.createUpgrade(4, currency, new ExponentialCost(1e50, 7*5.8));
+        D = theory.createUpgrade(4, currency, new ExponentialCost(1e50, Math.log2(1.1)));
         D.getDescription = (amount) => Utils.getMath(getDesc(D.level));
         D.getInfo = (amount) => Utils.getMathTo(getInfo(D.level), getInfo(D.level + amount));
         D.bought = (_) => updateObject_flag = true;
