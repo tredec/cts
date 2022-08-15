@@ -164,7 +164,7 @@ var tick = (elapsedTime, multiplier) => {
         updateObject_flag = false;
     }
     
-    rho_dot = vc1 * vc2 * (BigNumber.ONE + q1) / (BigNumber.ONE + q2) * dt
+    rho_dot = vc1 * vc2 * (BigNumber.ONE + q1) / (BigNumber.ONE + q2) * dt;
     currency.value += #bonus * vc1 * vc2 * (BigNumber.ONE + q1) / (BigNumber.ONE + q2).pow(BigNumber.TWO) * dt;
 
     theory.invalidateTertiaryEquation();
