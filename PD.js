@@ -37,7 +37,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_1=" + getC1(level).toString(0);
         let getInfo = (level) => "c_1=" + getC1(level).toString(0);
-        c1 = theory.createUpgrade(0, currency, new FirstFreeCost(new ExponentialCost(1, 1.000000001)));
+        c1 = theory.createUpgrade(0, currency, new FirstFreeCost(new ExponentialCost(1, 1.0000001)));
         c1.getDescription = (amount) => Utils.getMath(getDesc(c1.level));
         c1.getInfo = (amount) => Utils.getMathTo(getInfo(c1.level), getInfo(c1.level + amount));
     }
@@ -164,8 +164,9 @@ var tick = (elapsedTime, multiplier) => {
         updateObject_flag = false;
     }
     
-    rho_dot = vc1 * vc2 * (BigNumber.ONE + q1) / (BigNumber.ONE + q2) * dt;
-    currency.value += #bonus * vc1 * vc2 * (BigNumber.ONE + q1) / (BigNumber.ONE + q2).pow(BigNumber.TWO) * dt;
+    rho_dot = vc1 * vc2 * (BigNumber.ONE + q1) / (BigNumber.ONE + q2) * dt
+
+    currency.value += bonus * vc1 * vc2 * (BigNumber.ONE + q1) / (BigNumber.ONE + q2).pow(BigNumber.TWO) * dt;
 
     theory.invalidateTertiaryEquation();
 }
