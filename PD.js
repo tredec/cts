@@ -269,7 +269,6 @@ var getQ2 = (vA,vB,vC,vD) => factorial(vA + vB + vC + vD)/(factorial(vA)*factori
 var getPublicationMultiplier = (tau) => tau.isZero ? BigNumber.ONE : tau.pow(BigNumber.from(2));
 var getPublicationMultiplierFormula = (symbol) => "{" + symbol + "}^{2}";
 var getTau = () => currency.value.pow(BigNumber.from(0.1));
-var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(10), currency.symbol];
 var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.value.abs()).log10().toNumber();
 
 var getC1 = (level) => Utils.getStepwisePowerSum(level, 4, 10, 0);
