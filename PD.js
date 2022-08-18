@@ -29,6 +29,7 @@ var c1Exp;
 
 var init = () => {
     currency = theory.createCurrency();
+  currency.value = BigNumber.from("1e400")
 
     ///////////////////
     // Regular Upgrades
@@ -157,8 +158,7 @@ var updateAvailability = () => {
 }
 
 var tick = (elapsedTime, multiplier) => {
-  let speedup = 5000
-    let dt = BigNumber.from(elapsedTime*multiplier*speedup); 
+    let dt = BigNumber.from(elapsedTime*multiplier); 
     let bonus = theory.publicationMultiplier; 
     let vc1 = getC1(c1.level).pow(getC1Exp(c1Exp.level));
     let vc2 = getC2(c2.level);
