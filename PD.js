@@ -29,7 +29,7 @@ var c1Exp;
 
 var init = () => {
     currency = theory.createCurrency();
-  currency.value = BigNumber.from("1e400")
+  currency.value = BigNumber.from("1e401")
 
     ///////////////////
     // Regular Upgrades
