@@ -29,7 +29,6 @@ var c1Exp;
 
 var init = () => {
     currency = theory.createCurrency();
-  currency.value = BigNumber.from("1e401")
 
     ///////////////////
     // Regular Upgrades
@@ -68,7 +67,7 @@ var init = () => {
     {
         let getDesc = (level) => "B=2^{" + level+"}-1";
         let getInfo = (level) => "B=" + getB(level).toString(0);
-        B = theory.createUpgrade(3, currency, new ExponentialCost(1e4, Math.log2(2**costConst)));
+        B = theory.createUpgrade(3, currency, new ExponentialCost(1e4, costConst*Math.log2(2)));
         B.getDescription = (amount) => Utils.getMath(getDesc(B.level));
         B.getInfo = (amount) => Utils.getMathTo(getInfo(B.level), getInfo(B.level + amount));
         B.bought = (_) => updateObject_flag = true;
@@ -78,7 +77,7 @@ var init = () => {
     {
         let getDesc = (level) => "C=3^{" + level+"}-1";
         let getInfo = (level) => "C=" + getC(level).toString(0);
-        C = theory.createUpgrade(4, currency, new ExponentialCost(1e5, Math.log2(2.995**costConst)));
+        C = theory.createUpgrade(4, currency, new ExponentialCost(1e5, costConst*Math.log2(2.995)));
         C.getDescription = (amount) => Utils.getMath(getDesc(C.level));
         C.getInfo = (amount) => Utils.getMathTo(getInfo(C.level), getInfo(C.level + amount));
         C.bought = (_) => updateObject_flag = true;
@@ -88,7 +87,7 @@ var init = () => {
     {
         let getDesc = (level) => "D=5^{" + level+"}-1";
         let getInfo = (level) => "D=" + getD(level).toString(0);
-        D = theory.createUpgrade(5, currency, new ExponentialCost(1e7, Math.log2(4.97**costConst)));
+        D = theory.createUpgrade(5, currency, new ExponentialCost(1e7, costConst*Math.log2(4.97)));
         D.getDescription = (amount) => Utils.getMath(getDesc(D.level));
         D.getInfo = (amount) => Utils.getMathTo(getInfo(D.level), getInfo(D.level + amount));
         D.bought = (_) => updateObject_flag = true;
