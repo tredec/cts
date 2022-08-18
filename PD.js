@@ -22,15 +22,10 @@ var n = BigNumber.ZERO;
 var t_cumulative = BigNumber.ZERO;
 var updateObject_flag = false;
 
+const costConst = 1.404;
+
 var c1, A, B, C, D, t;
 var c1Exp;
-
-//TODO
-//More milestones ??
-//Balance
-
-
-//n = sum of objects
 
 var init = () => {
     currency = theory.createCurrency();
@@ -42,7 +37,7 @@ var init = () => {
     {
         let getDesc = (level) => "\\dot{t}=" + getT(level).toString(1);
         let getInfo = (level) => "\\dot{t}=" + getT(level).toString(1);
-        t = theory.createUpgrade(0, currency, new LinearCost(1e5, 1e5));
+        t = theory.createUpgrade(0, currency, new ExponentialCost(1e10, Math.log2(1e15)));
         t.getDescription = (amount) => Utils.getMath(getDesc(t.level));
         t.getInfo = (amount) => Utils.getMathTo(getInfo(t.level), getInfo(t.level + amount));
         t.maxLevel=4;
@@ -52,7 +47,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_1=" + getC1(level).toString(0);
         let getInfo = (level) => "c_1=" + getC1(level).toString(0);
-        c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(1, 1.4)));
+        c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(20, 1.4)));
         c1.getDescription = (amount) => Utils.getMath(getDesc(c1.level));
         c1.getInfo = (amount) => Utils.getMathTo(getInfo(c1.level), getInfo(c1.level + amount));
     }
@@ -65,13 +60,14 @@ var init = () => {
         A.getDescription = (amount) => Utils.getMath(getDesc(A.level));
         A.getInfo = (amount) => Utils.getMathTo(getInfo(A.level), getInfo(A.level + amount));
         A.bought = (_) => updateObject_flag = true;
+        
     }
     
     // B
     {
         let getDesc = (level) => "B=2^{" + level+"}-1";
         let getInfo = (level) => "B=" + getB(level).toString(0);
-        B = theory.createUpgrade(3, currency, new ExponentialCost(1e4,Math.log2(3)));
+        B = theory.createUpgrade(3, currency, new ExponentialCost(1e4, costConst*Math.log2(2)));
         B.getDescription = (amount) => Utils.getMath(getDesc(B.level));
         B.getInfo = (amount) => Utils.getMathTo(getInfo(B.level), getInfo(B.level + amount));
         B.bought = (_) => updateObject_flag = true;
@@ -81,7 +77,7 @@ var init = () => {
     {
         let getDesc = (level) => "C=3^{" + level+"}-1";
         let getInfo = (level) => "C=" + getC(level).toString(0);
-        C = theory.createUpgrade(4, currency, new ExponentialCost(1e5, Math.log2(7.2)));
+        C = theory.createUpgrade(4, currency, new ExponentialCost(1e5, costConst*Math.log2(2.995)));
         C.getDescription = (amount) => Utils.getMath(getDesc(C.level));
         C.getInfo = (amount) => Utils.getMathTo(getInfo(C.level), getInfo(C.level + amount));
         C.bought = (_) => updateObject_flag = true;
@@ -91,7 +87,7 @@ var init = () => {
     {
         let getDesc = (level) => "D=5^{" + level+"}-1";
         let getInfo = (level) => "D=" + getD(level).toString(0);
-        D = theory.createUpgrade(5, currency, new ExponentialCost(1e7, Math.log2(9.5)));
+        D = theory.createUpgrade(5, currency, new ExponentialCost(1e7, costConst*Math.log2(4.97)));
         D.getDescription = (amount) => Utils.getMath(getDesc(D.level));
         D.getInfo = (amount) => Utils.getMathTo(getInfo(D.level), getInfo(D.level + amount));
         D.bought = (_) => updateObject_flag = true;
@@ -114,12 +110,12 @@ var init = () => {
 
     /////////////////////
     // Checkpoint Upgrades
-    theory.setMilestoneCost(new LinearCost(1,5));
+    theory.setMilestoneCost(new LinearCost(10,5));
 
     {
         c1Exp = theory.createMilestoneUpgrade(0, 4);
-        c1Exp.description = Localization.getUpgradeIncCustomExpDesc("c_1", "0.1");
-        c1Exp.info = Localization.getUpgradeIncCustomExpInfo("c_1", "0.1");
+        c1Exp.description = Localization.getUpgradeIncCustomExpDesc("c_1", "0.015");
+        c1Exp.info = Localization.getUpgradeIncCustomExpInfo("c_1", "0.015");
         c1Exp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
     }
 
@@ -144,7 +140,7 @@ var init = () => {
         c2Term = theory.createMilestoneUpgrade(3, 1);
         c2Term.description = Localization.getUpgradeAddTermDesc("c_2");
         c2Term.info = Localization.getUpgradeAddTermInfo("c_2");
-        c2Term.boughtOrRefunded = (_) => {theory.invalidateSecondaryEquation(); updateAvailability(); };
+        c2Term.boughtOrRefunded = (_) => {theory.invalidatePrimaryEquation(); updateAvailability(); };
         c2Term.isAvailable = false;
 
     }
@@ -161,13 +157,13 @@ var updateAvailability = () => {
 }
 
 var tick = (elapsedTime, multiplier) => {
-    let speedup = 10000;
+  let speedup = 5000
     let dt = BigNumber.from(elapsedTime*multiplier*speedup); 
     let bonus = theory.publicationMultiplier; 
     let vc1 = getC1(c1.level).pow(getC1Exp(c1Exp.level));
     let vc2 = getC2(c2.level);
     let vt = getT(t.level);
-    t_cumulative += vt*dt;
+    t_cumulative += vt * dt;
     
     if (updateObject_flag) {        
         let vA = getA(A.level);
@@ -177,16 +173,14 @@ var tick = (elapsedTime, multiplier) => {
         n = vA+vB+vC+vD;
 
         q1 = getQ1(n);
-        q2 = getQ2(vA,vB,vC,vD);
-
+        q2 = q2.max(getQ2(vA,vB,vC,vD));
+        
         updateObject_flag = false;
     }
-    
 
+    rho_dot = t_cumulative * vc1 * vc2 * (1 + (BigNumber.ONE + q1) / (BigNumber.ONE + q2)).log() * dt;
 
-    rho_dot = t_cumulative * vc1 * vc2 * (1+(BigNumber.ONE + q1) / (BigNumber.ONE + q2)).log() * dt
-
-    currency.value += bonus * t_cumulative * vc1 * vc2 * (1+(BigNumber.ONE + q1) / (BigNumber.ONE + q2)).log() * dt;
+    currency.value += bonus * rho_dot;
 
     theory.invalidateTertiaryEquation();
 }
@@ -204,23 +198,23 @@ var setInternalState = (state) => {
 var postPublish = () => {
     q1 = BigNumber.ZERO;
     q2 = BigNumber.ZERO;
-  n = BigNumber.ZERO;
- t_cumulative = BigNumber.ZERO;
     updateObject_flag = true;
 }
 
 var getPrimaryEquation = () => {
-    theory.primaryEquationHeight = 90;
+    theory.primaryEquationHeight = 30;
     let result = "\\begin{matrix}";
-    result += "\\dot{\\rho}=c_1t";
-    if (c1Exp.level > 0) result += `^{${1+c1Exp.level*0.1}}`;
+    result += "\\dot{\\rho}=c_1";
+    if (c1Exp.level > 0) result += `^{${1+c1Exp.level*0.015}}`;
+    if (c2.isAvailable) result +="c_2"
+    result += "t"
     result += "\\ln(1+\\frac{1+q_1}{1+q_2})";
     result += "\\end{matrix}";
     return result;
 }
 
 var getSecondaryEquation = () => {
-    theory.secondaryEquationHeight = 90;
+    theory.secondaryEquationHeight = 100;
     let result = "q_1 = n! \\sum_{k=0}^{n}(-1)^k {\\frac{1}{k!}}";
     result += "\\\\q_2 = n!/(A!B!";
     if(C.isAvailable) result +="C!"
@@ -234,8 +228,7 @@ var getTertiaryEquation = () => {
     let result = "";
     result += "\\begin{matrix}q_1 =";
     result += q1.toString();
-    result += ",&q_2 ="
-    result += q2.toString();
+    if (n < BigNumber.from(1e25)) result += ",&q_2 ="+ q2.toString();
     result += ",&n ="
     result += n.toString();
     result += ",&t ="
@@ -250,10 +243,11 @@ var getTertiaryEquation = () => {
 //for small num normal factorial
 //for big num use of Stirlings approximation
 var factorial = (num) => {
-    if(num < 100){
+    if (num.isZero) return BigNumber.ONE;
+    if(num < BigNumber.HUNDRED){
         let temp = BigNumber.ONE;
-        for(let a = BigNumber.ONE; a<=num; a++){
-            temp *= a;
+        for(let i = BigNumber.ONE; i<=num; i+=BigNumber.ONE){
+            temp *= i;
         }
         return temp;
     }
@@ -263,9 +257,9 @@ var factorial = (num) => {
 //Maclaurin expansion of e^-x up to itr terems
 var mac_e_x = (itr) => {
     let num = BigNumber.ZERO;
-    for (let a = BigNumber.ZERO; a <= itr; a=a+BigNumber.ONE) {
-        let sign = BigNumber.from(-1);
-        if(a%2==0) sign = BigNumber.from(1);
+    for (let a = BigNumber.ZERO; a <= itr; a+=BigNumber.ONE) {
+        let sign = -BigNumber.ONE;
+        if(a%2==0) sign = BigNumber.ONE;
         num += sign/factorial(a);
     } 
     return num;
@@ -278,7 +272,7 @@ var getQ1 = (num_Obj) => {
     if (num_Obj.isZero || num_Obj == BigNumber.ONE) return BigNumber.ZERO;
 
     let part1 = factorial(num_Obj);
-    if(num_Obj < 50) {
+    if(num_Obj < BigNumber.FIVE*BigNumber.TEN) {
         let part2 = mac_e_x(num_Obj);
         return part1 * part2
     }
