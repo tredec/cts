@@ -304,6 +304,6 @@ var getB = (level) => BigNumber.TWO.pow(level) - BigNumber.ONE;
 var getC = (level) => BigNumber.THREE.pow(level) - BigNumber.ONE;
 var getD = (level) => BigNumber.FIVE.pow(level) - BigNumber.ONE;
 var getC2 = (level) => BigNumber.TWO.pow(level);
-var getC1Exp = (level) => BigNumber.from(1 + level * 0.1);
+var getC1Exp = (level) => BigNumber.from(1 + level * 0.015);
 
 init();
