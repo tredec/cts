@@ -161,7 +161,7 @@ var updateAvailability = () => {
 }
 
 var tick = (elapsedTime, multiplier) => {
-    let speedup = 1;
+    let speedup = 10000;
     let dt = BigNumber.from(elapsedTime*multiplier*speedup); 
     let bonus = theory.publicationMultiplier; 
     let vc1 = getC1(c1.level).pow(getC1Exp(c1Exp.level));
