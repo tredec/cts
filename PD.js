@@ -167,7 +167,7 @@ var tick = (elapsedTime, multiplier) => {
     let vc1 = getC1(c1.level).pow(getC1Exp(c1Exp.level));
     let vc2 = getC2(c2.level);
     let vt = getT(t.level);
-    t_cumulative += vt;
+    t_cumulative += vt*dt;
     
     if (updateObject_flag) {        
         let vA = getA(A.level);
