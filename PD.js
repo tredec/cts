@@ -6,8 +6,12 @@ import { Utils } from "./api/Utils";
 
 var id = "permutations_and_derangements";
 var name = "Permutations & Derangements";
-var description = "A theory about the possible arrangements and derangments of objects";
-var authors = "Gen (Gen#3006)";
+var description = "A theory about the possible arrangements and derangments of objectsz\n"+
+                    "Permutations are the number of ways objects can be stored as a diferent sequence, in this case a 'very' long string of text\n"+
+                    "Derangments are the number of ways all objects can be rearranged so that each object is not in its current position\n"+
+                    "Note: in this theory every object is treated as individually different for derangment (only the number of object matters, the types and amount in each of them doesn't)\n"+
+                    "";
+var authors = "Gen (Gen#3006) - Idea\nXLII (XLII#0042) - Balancing";
 var version = 1.0;
 var releaseOrder = "1";
 
@@ -15,9 +19,10 @@ var rho_dot;
 var q1 = BigNumber.ZERO;
 var q2 = BigNumber.ZERO;
 var n = BigNumber.ZERO;
+var t_cumulative = BigNumber.ZERO;
 var updateObject_flag = false;
 
-var c1, A, B, C, D;
+var c1, A, B, C, D, t;
 var c1Exp;
 
 //TODO
@@ -33,11 +38,21 @@ var init = () => {
     ///////////////////
     // Regular Upgrades
     
+    //t
+    {
+        let getDesc = (level) => "\\dot{t}=" + getT(level).toString(1);
+        let getInfo = (level) => "\\dot{t}=" + getT(level).toString(1);
+        t = theory.createUpgrade(0, currency, new LinearCost(1e5, 1e5));
+        t.getDescription = (amount) => Utils.getMath(getDesc(t.level));
+        t.getInfo = (amount) => Utils.getMathTo(getInfo(t.level), getInfo(t.level + amount));
+        t.maxLevel=4;
+    }
+
     // c1
     {
         let getDesc = (level) => "c_1=" + getC1(level).toString(0);
         let getInfo = (level) => "c_1=" + getC1(level).toString(0);
-        c1 = theory.createUpgrade(0, currency, new FirstFreeCost(new ExponentialCost(1, Math.log2(1.2))));
+        c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(1, 1.4)));
         c1.getDescription = (amount) => Utils.getMath(getDesc(c1.level));
         c1.getInfo = (amount) => Utils.getMathTo(getInfo(c1.level), getInfo(c1.level + amount));
     }
@@ -46,7 +61,7 @@ var init = () => {
     {
         let getDesc = (level) => "A=" + getA(level).toString(0);
         let getInfo = (level) => "A=" + getA(level).toString(0);
-        A = theory.createUpgrade(1, currency, new ExponentialCost(1000, Math.log2(1.1)));
+        A = theory.createUpgrade(2, currency, new ExponentialCost(1e3, Math.log2(2)));
         A.getDescription = (amount) => Utils.getMath(getDesc(A.level));
         A.getInfo = (amount) => Utils.getMathTo(getInfo(A.level), getInfo(A.level + amount));
         A.bought = (_) => updateObject_flag = true;
@@ -54,9 +69,9 @@ var init = () => {
     
     // B
     {
-        let getDesc = (level) => "B=" + getB(level).toString(0);
+        let getDesc = (level) => "B=2^{" + level+"}-1";
         let getInfo = (level) => "B=" + getB(level).toString(0);
-        B = theory.createUpgrade(2, currency, new ExponentialCost(10000, Math.log2(1.1)));
+        B = theory.createUpgrade(3, currency, new ExponentialCost(1e4,Math.log2(3)));
         B.getDescription = (amount) => Utils.getMath(getDesc(B.level));
         B.getInfo = (amount) => Utils.getMathTo(getInfo(B.level), getInfo(B.level + amount));
         B.bought = (_) => updateObject_flag = true;
@@ -64,9 +79,9 @@ var init = () => {
     
     // C
     {
-        let getDesc = (level) => "C=" + getC(level).toString(0);
+        let getDesc = (level) => "C=3^{" + level+"}-1";
         let getInfo = (level) => "C=" + getC(level).toString(0);
-        C = theory.createUpgrade(3, currency, new ExponentialCost(1e10, Math.log2(1.1)));
+        C = theory.createUpgrade(4, currency, new ExponentialCost(1e5, Math.log2(7.2)));
         C.getDescription = (amount) => Utils.getMath(getDesc(C.level));
         C.getInfo = (amount) => Utils.getMathTo(getInfo(C.level), getInfo(C.level + amount));
         C.bought = (_) => updateObject_flag = true;
@@ -74,9 +89,9 @@ var init = () => {
 
     // D
     {
-        let getDesc = (level) => "D=" + getD(level).toString(0)
+        let getDesc = (level) => "D=5^{" + level+"}-1";
         let getInfo = (level) => "D=" + getD(level).toString(0);
-        D = theory.createUpgrade(4, currency, new ExponentialCost(1e50, Math.log2(1.1)));
+        D = theory.createUpgrade(5, currency, new ExponentialCost(1e7, Math.log2(9.5)));
         D.getDescription = (amount) => Utils.getMath(getDesc(D.level));
         D.getInfo = (amount) => Utils.getMathTo(getInfo(D.level), getInfo(D.level + amount));
         D.bought = (_) => updateObject_flag = true;
@@ -86,7 +101,7 @@ var init = () => {
     {
         let getDesc = (level) => "c_2=2^{" + level+"}";
         let getInfo = (level) => "c_2=" + getC2(level).toString(0);
-        c2 = theory.createUpgrade(5, currency, new ExponentialCost(1e100, 10*Math.log2(10)));
+        c2 = theory.createUpgrade(6, currency, new ExponentialCost(1e100, 10*Math.log2(10)));
         c2.getDescription = (amount) => Utils.getMath(getDesc(c2.level));
         c2.getInfo = (amount) => Utils.getMathTo(getInfo(c2.level), getInfo(c2.level + amount));
     }
@@ -146,10 +161,13 @@ var updateAvailability = () => {
 }
 
 var tick = (elapsedTime, multiplier) => {
-    let dt = BigNumber.from(elapsedTime*multiplier); 
+    let speedup = 100;
+    let dt = BigNumber.from(elapsedTime*multiplier*speedup); 
     let bonus = theory.publicationMultiplier; 
     let vc1 = getC1(c1.level).pow(getC1Exp(c1Exp.level));
     let vc2 = getC2(c2.level);
+    let vt = getT(t.level);
+    t_cumulative += vt;
     
     if (updateObject_flag) {        
         let vA = getA(A.level);
@@ -164,19 +182,22 @@ var tick = (elapsedTime, multiplier) => {
         updateObject_flag = false;
     }
     
-    rho_dot = vc1 * vc2 * (BigNumber.ONE + q1) / (BigNumber.ONE + q2) * dt
 
-    currency.value += bonus * vc1 * vc2 * (BigNumber.ONE + q1) / (BigNumber.ONE + q2).pow(BigNumber.TWO) * dt;
+
+    rho_dot = t_cumulative * vc1 * vc2 * (1+(BigNumber.ONE + q1) / (BigNumber.ONE + q2)).log() * dt
+
+    currency.value += bonus * t_cumulative * vc1 * vc2 * (1+(BigNumber.ONE + q1) / (BigNumber.ONE + q2)).log() * dt;
 
     theory.invalidateTertiaryEquation();
 }
 
-var getInternalState = () => `${q1} ${q2}`;
+var getInternalState = () => `${q1} ${q2} ${t_cumulative}`;
 
 var setInternalState = (state) => {
     let values = state.split(" ");
     if (values.length > 0) q1 = parseBigNumber(values[0]);
     if (values.length > 1) q2 = parseBigNumber(values[1]);
+    if (values.length > 2) t_cumulative = parseBigNumber(values[2]);
     updateObject_flag = true;
 }
 
@@ -189,9 +210,9 @@ var postPublish = () => {
 var getPrimaryEquation = () => {
     theory.primaryEquationHeight = 90;
     let result = "\\begin{matrix}";
-    result += "\\dot{\\rho}=c_1";
+    result += "\\dot{\\rho}=c_1t";
     if (c1Exp.level > 0) result += `^{${1+c1Exp.level*0.1}}`;
-    result += "\\frac{1+q1}{(1+q2)^2}";
+    result += "\\ln(1+\\frac{1+q_1}{1+q_2})";
     result += "\\end{matrix}";
     return result;
 }
@@ -209,12 +230,14 @@ var getSecondaryEquation = () => {
 
 var getTertiaryEquation = () => {
     let result = "";
-    result += "\\begin{matrix}q_1=";
+    result += "\\begin{matrix}q_1 =";
     result += q1.toString();
     result += ",&q_2 ="
     result += q2.toString();
     result += ",&n ="
     result += n.toString();
+    result += ",&t ="
+    result += t_cumulative.toString();
     result += ",&\\dot{\\rho} ="
     result += rho_dot.toString();
     result += "\\end{matrix}";
@@ -225,7 +248,7 @@ var getTertiaryEquation = () => {
 //for small num normal factorial
 //for big num use of Stirlings approximation
 var factorial = (num) => {
-    if(num < BigNumber.HUNDRED){
+    if(num < 100){
         let temp = BigNumber.ONE;
         for(let a = BigNumber.ONE; a<=num; a++){
             temp *= a;
@@ -238,7 +261,7 @@ var factorial = (num) => {
 //Maclaurin expansion of e^-x up to itr terems
 var mac_e_x = (itr) => {
     let num = BigNumber.ZERO;
-    for (let a = BigNumber.ZERO; a <= itr; a++) {
+    for (let a = BigNumber.ZERO; a <= itr; a=a+BigNumber.ONE) {
         let sign = BigNumber.from(-1);
         if(a%2==0) sign = BigNumber.from(1);
         num += sign/factorial(a);
@@ -266,16 +289,18 @@ var getQ1 = (num_Obj) => {
 var getQ2 = (vA,vB,vC,vD) => factorial(vA + vB + vC + vD)/(factorial(vA)*factorial(vB)*factorial(vC)*factorial(vD));
 
 
-var getPublicationMultiplier = (tau) => tau.isZero ? BigNumber.ONE : tau.pow(BigNumber.from(2));
-var getPublicationMultiplierFormula = (symbol) => "{" + symbol + "}^{2}";
+var getPublicationMultiplier = (tau) => tau.isZero ? BigNumber.ONE : tau;
+var getPublicationMultiplierFormula = (symbol) => "{" + symbol + "}";
 var getTau = () => currency.value.pow(BigNumber.from(0.1));
+var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(10), currency.symbol];
 var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.value.abs()).log10().toNumber();
 
+var getT = (level) => BigNumber.from(0.2 + level * 0.2);
 var getC1 = (level) => Utils.getStepwisePowerSum(level, 4, 10, 0);
 var getA = (level) => BigNumber.from(level);
-var getB = (level) => BigNumber.from(level*2);
-var getC = (level) => BigNumber.from(level*3);
-var getD = (level) => BigNumber.from(level*5);
+var getB = (level) => BigNumber.TWO.pow(level) - BigNumber.ONE;
+var getC = (level) => BigNumber.THREE.pow(level) - BigNumber.ONE;
+var getD = (level) => BigNumber.FIVE.pow(level) - BigNumber.ONE;
 var getC2 = (level) => BigNumber.TWO.pow(level);
 var getC1Exp = (level) => BigNumber.from(1 + level * 0.1);
 
