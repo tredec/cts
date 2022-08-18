@@ -204,6 +204,8 @@ var setInternalState = (state) => {
 var postPublish = () => {
     q1 = BigNumber.ZERO;
     q2 = BigNumber.ZERO;
+  n = BigNumber.ZERO;
+ t_cumulative = BigNumber.ZERO;
     updateObject_flag = true;
 }
 
