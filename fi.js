@@ -12,7 +12,7 @@ var version = 1.0;
 var releaseOrder = "1";
 
 var rho_dot = BigNumber.ZERO;
-var t_cumulative = BigNumber.ZERO;
+var t_cumulative = 1;
 
 // lambda = 1 - 1/2^k
 // lambda = 1 - 1/lambda_helper
