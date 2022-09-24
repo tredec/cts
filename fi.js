@@ -105,27 +105,12 @@ var updateAvailability = () => {
 var tick = (elapsedTime, multiplier) => {
     let dt = BigNumber.from(elapsedTime*multiplier); 
     let bonus = theory.publicationMultiplier; 
-    let vq1 = getQ1(q1.level).pow(getQ1Exp(q1Exp.level));
-    let vq2 = getQ2(q2.level);
-    let vt = getT(t.level);
 
-    if(update_divisor){
-        lambda_helper = BigNumber.TWO.pow(getK(k.level));
+    rho_dot = t_cumulative + Math.sin(t_cumulative % (t_cumulative/10))*t_cumulative;
 
-        let temp = -getK(k.level)*BigNumber.TWO.log10();
-        let exp = Math.floor(temp),
-        man = BigNumber.TEN.pow(temp-exp);
-        lambda_man = man;
-        lambda_exp = exp;
-
-        update_divisor = false;
-    }
-
-    t_cumulative += vt * dt;
-
-    rho_dot = t_cumulative * vq1 * vq2/(frac_int(getK(k.level))-norm_int()) * dt;
-
-    currency.value += bonus * rho_dot;
+    currency.value =rho_dot;
+    
+     t_cumulative+=1*dt
 
     theory.invalidateTertiaryEquation();
 }
