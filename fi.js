@@ -106,7 +106,7 @@ var tick = (elapsedTime, multiplier) => {
     let dt = BigNumber.from(elapsedTime*multiplier); 
     let bonus = theory.publicationMultiplier; 
 
-    rho_dot = BigNumber.from( Math.sin(t_cumulative % (t_cumulative/10))*t_cumulative)*BigNumber.from(t_cumulative);
+    rho_dot = BigNumber.from( Math.sin(t_cumulative % (t_cumulative/10))*t_cumulative**2);
 
     currency.value =rho_dot;
     
