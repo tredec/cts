@@ -203,7 +203,9 @@ var tick = (elapsedTime, multiplier) => {
   currency.value += dt * bonus * vq1.pow(getQ1Exp(q1exp.level)) * getQ2(q2.level) * rhoBoost * q.pow(getQExp(qexp.level));
   theory.invalidateTertiaryEquation();
 };
-
+var postPublish = () =>{
+q = BigNumber.ONE;
+} 
 var getPrimaryEquation = () => {
   theory.primaryEquationHeight = 90;
   let result = "\\dot{\\rho} = q_1";
