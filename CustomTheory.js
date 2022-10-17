@@ -214,7 +214,7 @@ var getPrimaryEquation = () => {
 
   result += "q_2";
 
-  result += "10^{\\lfloor log_2(n-1) \\rfloor}T_n\\\\\\";
+  result += "10^{\\lfloor log_2(n-1) \\rfloor}T_n \\\\\\ ";
 
   if (diffterm.level > 0) {
     result += "\\dot{q} = ";
