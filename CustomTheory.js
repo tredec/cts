@@ -218,8 +218,8 @@ var getPrimaryEquation = () => {
 
   if (diffterm.level > 0) {
     result += "\\dot{q} = ";
-    if (diffterm.level === 1) result += "frac{T_n - T_{n-1}}{10}";
-    if (diffterm.level === 2) result += "frac{\\max(T_n - T_{n-1})}{10}";
+    if (diffterm.level === 1) result += "\\frac{T_n - T_{n-1}}{10}";
+    if (diffterm.level === 2) result += "\\frac{\\max(T_n - T_{n-1})}{10}";
     if (q3term.level > 0) result += "\\min(5000, sum)^{q_3}";
   }
 
@@ -247,6 +247,9 @@ var getTertiaryEquation = () => {
 
   result += ",&10^{\\lfloor log_2(n-1) \\rfloor}T_n = ";
   result += rhoBoost.toString();
+
+  result += ",&q = ";
+  result += q.toString();
 
   result += "\\\\ {}\\end{matrix}";
   return result;
