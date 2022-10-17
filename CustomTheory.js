@@ -223,7 +223,7 @@ var getPrimaryEquation = () => {
     result += "\\dot{q} = ";
     if (diffterm.level === 1) result += "\\frac{T_n - T_{n-1}}{10}";
     if (diffterm.level === 2) result += "\\frac{\\max(T_n - T_{n-1})}{10}";
-    if (q3term.level > 0) result += "\\min(5000, sum)^{q_3}";
+    if (q3term.level > 0) result += "\\min(5000, n)^{q_3}";
   }
 
   // result += "A\\\\\\\\";
