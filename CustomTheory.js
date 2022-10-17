@@ -5,9 +5,9 @@ import { theory } from "./api/Theory";
 import { Utils } from "./api/Utils";
 
 var id = "my_custom_theory_id";
-var name = "Toothpick Theory";
-var description = "A basic theory.";
-var authors = "Gilles-Philippe Paillé";
+var name = "Toothpick Sequence";
+var description = "A theory about the growth of the Toothpick Sequence.";
+var authors = "XLII#0042";
 var version = 1;
 
 var currency;
