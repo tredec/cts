@@ -265,8 +265,8 @@ function updateT() {
 
   rhoBoost = BigNumber.TEN.pow(BigNumber.from(Math.floor(Math.log2(sum - 1)))) * BigNumber.from(t_n);
 
-  if (diffterm === 1) qdot = BigNumber.from(t_n - t_nm1) / BigNumber.TEN;
-  else if (diffterm === 2) qdot = BigNumber.from(maxDiff) / BigNumber.TEN;
+  if (diffterm.level === 1) qdot = BigNumber.from(t_n - t_nm1) / BigNumber.TEN;
+  else if (diffterm.level === 2) qdot = BigNumber.from(maxDiff) / BigNumber.TEN;
   else qdot = BigNumber.ZERO;
 
   qdot *= BigNumber.from(Math.min(5000, sum)).pow(BigNumber.from(q3term > 0 ? q3.level * 0.05 : 0));
