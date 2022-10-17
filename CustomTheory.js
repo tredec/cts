@@ -204,7 +204,7 @@ var tick = (elapsedTime, multiplier) => {
 };
 
 var getPrimaryEquation = () => {
-  theory.primaryEquationHeight = 130;
+  theory.primaryEquationHeight = 90;
   let result = "\\dot{\\rho} = q_1";
 
   if (q1exp.level == 1) result += "^{1.02}";
