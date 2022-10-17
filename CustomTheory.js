@@ -79,8 +79,8 @@ var init = () => {
   }
   // c3
   {
-    let getDesc = (level) => "c_3=" + level.toString();
-    let getInfo = (level) => "c_3=" + level.toString();
+    let getDesc = (level) => "c_3=" + getC3(level).toString(0);
+    let getInfo = (level) => "c_3=" + getC3(level).toString(0);
     c3 = theory.createUpgrade(5, currency, new ExponentialCost(1e65, Math.log2(700)));
     c3.getDescription = (_) => Utils.getMath(getDesc(c3.level));
     c3.getInfo = (amount) => Utils.getMathTo(getInfo(c3.level), getInfo(c3.level + amount));
