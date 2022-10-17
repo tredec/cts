@@ -27,7 +27,7 @@ var chapter1, chapter2;
 
 var init = () => {
   currency = theory.createCurrency();
-  currency.value = BigNumber.from("1e425")
+  currency.value = BigNumber.from("1.01e425")
 
   ///////////////////
   // Regular Upgrades
