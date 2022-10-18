@@ -573,8 +573,8 @@ var getPrimaryEquation = () => {
   theory.primaryEquationHeight = 150;
   theory.primaryEquationScale = 0.9;
   let result = "";
-  result += "T_{2^k+I}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0;  \\\\ T_{2^k}+2T_i + T_{i+1}-1, & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
-  result += "\\qquad\\qquad\\qquad\\qquad\\qquad\\qquad\\qquad \\dot{\\rho} = q_1";
+  result += "T_{2^k+I}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
+  result += "\\qquad\\qquad\\qquad\\qquad\\qquad \\dot{\\rho} = q_1";
 
   if (q1exp.level > 0) result += `^{${getQ1Exp(q1exp.level).toString(3)}}`;
 
