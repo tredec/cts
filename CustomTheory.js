@@ -610,7 +610,7 @@ function updateT() {
   let t_nm1 = T(sum - 1);
   maxDiff = Math.max(t_n - t_nm1, maxDiff, ...max.slice(0, sum - 1));
 
-  rhoBoost = BigNumber.TEN.pow(BigNumber.from(Math.floor(Math.log2(sum - 1)))) * BigNumber.from(t_n).pow(q3term.level > 0 ? BigNumber.from(0.7)+getQ3(q3.level) : BigNumber.ZERO);
+  rhoBoost = BigNumber.TEN.pow(BigNumber.from(Math.floor(Math.log2(sum - 1)))) * BigNumber.from(t_n).pow(q3term.level > 0 ? BigNumber.from(0.7)+getQ3(q3.level) : BigNumber.ONE);
 
   if (diffterm.level === 1) qdot = BigNumber.from(t_n - t_nm1);
   else if (diffterm.level === 2) qdot = BigNumber.from(maxDiff);
