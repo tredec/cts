@@ -468,6 +468,7 @@ q3.bought = (_) => (updateT_flag = true);
     diffterm.boughtOrRefunded = (_) => {
       updateAvailability();
       theory.invalidatePrimaryEquation();
+updateT_flag=true;
     };
   }
   {
