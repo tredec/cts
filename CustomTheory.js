@@ -469,7 +469,7 @@ var init = () => {
     };
   }
   {
-    qexp = theory.createMilestoneUpgrade(5, 4);
+    qexp = theory.createMilestoneUpgrade(5, 3);
     qexp.description = Localization.getUpgradeIncCustomExpDesc("q", "0.01");
     qexp.info = Localization.getUpgradeIncCustomExpInfo("q", "0.01");
     qexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
@@ -590,11 +590,12 @@ var getTertiaryEquation = () => {
   result += sum.toString(0);
 
   result += ",&10^{\\lfloor log_2(n-1) \\rfloor}T_n = ";
-  result += rhoBoost.toString();
+  result += rhoBoost.toString(0);
 
+if(diffterm.level >0{
   result += ",&q = ";
   result += q.toString();
-
+}
   result += "\\\\ {}\\end{matrix}";
   return result;
 };
