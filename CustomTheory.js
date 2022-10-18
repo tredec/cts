@@ -14,13 +14,15 @@ var currency;
 var q = BigNumber.ONE;
 var q1, q2, q3, c1, c2, c3;
 var q1exp, c2term, c3term, q3term, diffterm, qexp;
-var sum = BigNumber.ZERO;
+var sum = BigNumber.ONE;
 var maxDiff = 0;
 
 var rhoBoost = BigNumber.ONE;
 var qdot = BigNumber.ZERO;
 
 var updateT_flag = false;
+
+var t_n = 0;
 
 var achievement1, achievement2;
 var chapter1, chapter2;
@@ -366,7 +368,6 @@ var t5000 = T(5000);
 
 var init = () => {
   currency = theory.createCurrency();
-currency.value = BigNumber.from("1.01e175");
 
   ///////////////////
   // Regular Upgrades
@@ -391,17 +392,17 @@ currency.value = BigNumber.from("1.01e175");
   {
     let getDesc = (level) => "q_3=" + getQ3(level).toString(2);
     let getInfo = (level) => "q_3=" + getQ3(level).toString(2);
-    q3 = theory.createUpgrade(2, currency, new ExponentialCost(1e140, Math.log2(3000)));
+    q3 = theory.createUpgrade(2, currency, new ExponentialCost(1e125, Math.log2(3165)));
     q3.getDescription = (_) => Utils.getMath(getDesc(q3.level));
     q3.getInfo = (amount) => Utils.getMathTo(getInfo(q3.level), getInfo(q3.level + amount));
-q3.bought = (_) => (updateT_flag = true);
+    q3.bought = (_) => (updateT_flag = true);
   }
 
   // c1
   {
     let getDesc = (level) => "c_1=" + getC1(level).toString(0);
     let getInfo = (level) => "c_1=" + getC1(level).toString(0);
-    c1 = theory.createUpgrade(3, currency, new FirstFreeCost(new ExponentialCost(1e-2, Math.log2(3e7))));
+    c1 = theory.createUpgrade(3, currency, new ExponentialCost(1e-2, Math.log2(3e7)));
     c1.getDescription = (_) => Utils.getMath(getDesc(c1.level));
     c1.getInfo = (amount) => Utils.getMathTo(getInfo(c1.level), getInfo(c1.level + amount));
     c1.maxLevel = 40;
@@ -439,27 +440,39 @@ q3.bought = (_) => (updateT_flag = true);
 
   {
     q1exp = theory.createMilestoneUpgrade(0, 3);
-    q1exp.description = Localization.getUpgradeIncCustomExpDesc("q_1", "0.02");
-    q1exp.info = Localization.getUpgradeIncCustomExpInfo("q_1", "0.02");
+    q1exp.description = Localization.getUpgradeIncCustomExpDesc("q_1", "0.017");
+    q1exp.info = Localization.getUpgradeIncCustomExpInfo("q_1", "0.017");
     q1exp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
   }
   {
     c2term = theory.createMilestoneUpgrade(1, 1);
     c2term.description = Localization.getUpgradeAddTermDesc("c_2");
     c2term.info = Localization.getUpgradeAddTermInfo("c_2");
-    c2term.boughtOrRefunded = (_) => updateAvailability();
+    c2term.boughtOrRefunded = (_) => {
+      updateAvailability();
+      updateT_flag = true;
+      theory.invalidateSecondaryEquation();
+    };
   }
   {
     c3term = theory.createMilestoneUpgrade(2, 1);
     c3term.description = Localization.getUpgradeAddTermDesc("c_3");
     c3term.info = Localization.getUpgradeAddTermInfo("c_3");
-    c3term.boughtOrRefunded = (_) => updateAvailability();
+    c3term.boughtOrRefunded = (_) => {
+      updateAvailability();
+      updateT_flag = true;
+      theory.invalidateSecondaryEquation();
+    };
   }
   {
     q3term = theory.createMilestoneUpgrade(3, 1);
     q3term.description = Localization.getUpgradeAddTermDesc("q_3");
     q3term.info = Localization.getUpgradeAddTermInfo("q_3");
-    q3term.boughtOrRefunded = (_) =>{ updateAvailability();updateT_flag=true;} 
+    q3term.boughtOrRefunded = (_) => {
+      updateAvailability();
+      updateT_flag = true;
+      theory.invalidateSecondaryEquation();
+    };
   }
   {
     diffterm = theory.createMilestoneUpgrade(4, 2);
@@ -468,14 +481,18 @@ q3.bought = (_) => (updateT_flag = true);
     diffterm.boughtOrRefunded = (_) => {
       updateAvailability();
       theory.invalidatePrimaryEquation();
-updateT_flag=true;
+      updateT_flag = true;
     };
   }
   {
     qexp = theory.createMilestoneUpgrade(5, 3);
-    qexp.description = Localization.getUpgradeIncCustomExpDesc("q", "0.01");
-    qexp.info = Localization.getUpgradeIncCustomExpInfo("q", "0.01");
-    qexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
+    qexp.description = Localization.getUpgradeIncCustomExpDesc("q", "0.0025");
+    qexp.info = Localization.getUpgradeIncCustomExpInfo("q", "0.0025");
+    qexp.boughtOrRefunded = (_) => {
+      updateAvailability();
+      theory.invalidatePrimaryEquation();
+      updateT_flag = true;
+    };
   }
 
   function getMilCustomCost(lvl) {
@@ -489,7 +506,7 @@ updateT_flag=true;
       case 3:
         return 175 * 0.1;
       case 4:
-        return 250 * 0.1;
+        return 225 * 0.1;
       case 5:
         return 325 * 0.1;
       case 6:
@@ -529,8 +546,7 @@ var tick = (elapsedTime, multiplier) => {
   let bonus = theory.publicationMultiplier;
 
   if (updateT_flag) {
-    //put failsafe for milestone
-    sum = getC1(c1.level) + getC2(c2.level) + getC3(c3.level);
+    sum = getC1(c1.level) + (c2term.level > 0 ? getC2(c2.level) : 0) + (c3term.level > 0 ? getC3(c3.level) : 0);
     updateT();
     updateT_flag = false;
   }
@@ -544,6 +560,8 @@ var tick = (elapsedTime, multiplier) => {
 };
 var postPublish = () => {
   q = BigNumber.ONE;
+  qdot = BigNumber.ZERO;
+  updateT_flag = true;
   theory.invalidateTertiaryEquation();
 };
 var setInternalState = (state) => {
@@ -552,21 +570,25 @@ var setInternalState = (state) => {
   updateT_flag = true;
 };
 var getPrimaryEquation = () => {
-  theory.primaryEquationHeight = 90;
-  let result = "\\dot{\\rho} = q_1";
+  theory.primaryEquationHeight = 150;
+  theory.primaryEquationScale = 0.9;
+  let result = "";
+  result += "T(2^k+i)\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0;  \\\\ T(2^k)+2T(i) + T(i+1) -1, & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
+  result += "\\qquad\\qquad\\qquad\\qquad\\qquad\\qquad\\qquad \\dot{\\rho} = q_1";
 
-  if (q1exp.level == 1) result += "^{1.0175}";
-  if (q1exp.level == 2) result += "^{1.035}";
-  if (q1exp.level == 3) result += "^{1.0525}";
+  if (q1exp.level > 0) result += `^{${getQ1Exp(q1exp.level).toString(3)}}`;
 
   result += "q_2";
+  if (diffterm.level > 0) result += "q";
+  if (qexp.level > 0) result += `^{${getQExp(qexp.level).toString(4)}}`;
+  result += "A";
 
-  result += "10^{\\lfloor log_2(n-1) \\rfloor}T_n";
-  if(q3term.level >0)result +="^{0.7+q_3}";
+  result += "\\\\\\ ";
+
   if (diffterm.level > 0) {
-    result += "q \\\\\\ ";
+    result += "\\\\\\\\ ";
     result += "\\dot{q} = ";
-    if (diffterm.level === 1) result += " T_n - T_{n-1}";
+    if (diffterm.level === 1) result += "(T_n - T_{n-1})";
     if (diffterm.level === 2) result += "\\max(T_n - T_{n-1})";
     if (q3term.level > 0) result += "(\\min(T_n, T_{5000})^{4})^{q_3}";
   }
@@ -579,8 +601,17 @@ var getPrimaryEquation = () => {
   return result;
 };
 var getSecondaryEquation = () => {
+  theory.secondaryEquationHeight = 50;
   let result = "\\begin{matrix}";
-  result += theory.latexSymbol + "= \\max\\rho^{0.1}";
+  result += "A = 10^{\\lfloor log_2(n) \\rfloor}T_n";
+  if (q3term.level > 0) result += "^{0.7+q_3}";
+  result += `\\\\\\\\ n = c_1`;
+  if (c2term.level > 0) result += " + c_2";
+  if (c3term.level > 0) result += " + c_3";
+
+  result += ",";
+
+  result += "\\quad" + theory.latexSymbol + "=\\max\\rho^{0.1}";
 
   result += "\\end{matrix}";
   return result;
@@ -588,17 +619,16 @@ var getSecondaryEquation = () => {
 var getTertiaryEquation = () => {
   let result = "\\begin{matrix}";
 
-  result += `n = \\sum_{i=1}^{${c3term.level > 0 ? 3 : 2}} c_i ,& `;
   result += "n = ";
   result += sum.toString(0);
 
-  result += ",&10^{\\lfloor log_2(n-1) \\rfloor}T_n = ";
+  result += ",&A = ";
   result += rhoBoost.toString(0);
 
-if(diffterm.level >0) {
-  result += ",&q = ";
-  result += q.toString();
-}
+  if (diffterm.level > 0) {
+    result += ",&q = ";
+    result += q.toString();
+  }
   result += "\\\\ {}\\end{matrix}";
   return result;
 };
@@ -607,11 +637,11 @@ function updateT() {
     rhoBoost = sum;
     return;
   }
-  let t_n = T(sum);
+  t_n = T(sum);
   let t_nm1 = T(sum - 1);
   maxDiff = Math.max(t_n - t_nm1, maxDiff, ...max.slice(0, sum - 1));
 
-  rhoBoost = BigNumber.TEN.pow(BigNumber.from(Math.floor(Math.log2(sum - 1)))) * BigNumber.from(t_n).pow(q3term.level > 0 ? BigNumber.from(0.7)+getQ3(q3.level) : BigNumber.ONE);
+  rhoBoost = BigNumber.TEN.pow(BigNumber.from(Math.floor(Math.log2(sum)))) * BigNumber.from(t_n).pow(q3term.level > 0 ? BigNumber.from(0.6) + getQ3(q3.level) : BigNumber.ONE);
 
   if (diffterm.level === 1) qdot = BigNumber.from(t_n - t_nm1);
   else if (diffterm.level === 2) qdot = BigNumber.from(maxDiff);
@@ -638,10 +668,10 @@ let getVarVal = (lvl, stepLength) => (((lvl - (lvl % stepLength)) / stepLength -
 var getQ1 = (level) => Utils.getStepwisePowerSum(level, 2, 10, 0);
 var getQ2 = (level) => BigNumber.TWO.pow(level);
 var getQ3 = (level) => level * BigNumber.from(0.01);
-var getC1 = (level) => Utils.getStepwisePowerSum(level, 5, 10, 0);
+var getC1 = (level) => Utils.getStepwisePowerSum(level, 5, 10, 1);
 var getC2 = (level) => BigNumber.from(getVarVal(level, 15));
 var getC3 = (level) => BigNumber.from(getVarVal(level, 20));
-var getQ1Exp = (level) => BigNumber.from(1 + 0.0175 * level);
+var getQ1Exp = (level) => BigNumber.from(1 + 0.017 * level);
 var getQExp = (level) => BigNumber.from(1 + 0.0025 * level);
 
 init();
