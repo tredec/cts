@@ -366,6 +366,7 @@ var t5000 = T(5000);
 
 var init = () => {
   currency = theory.createCurrency();
+currency.value = BigNumber.from("1.01e400");
 
   ///////////////////
   // Regular Upgrades
@@ -492,7 +493,7 @@ var init = () => {
       case 6:
         return 375 * 0.1;
       case 7:
-        return 425 * 0.1;
+        return 400 * 0.1;
       case 8:
         return 1175 * 0.1;
       case 9:
