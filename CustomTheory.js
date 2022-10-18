@@ -543,6 +543,11 @@ var postPublish = () => {
   q = BigNumber.ONE;
   theory.invalidateTertiaryEquation();
 };
+var setInternalState = (state) => {
+  let values = state.split(" ");
+
+  updateT_flag = true;
+};
 var getPrimaryEquation = () => {
   theory.primaryEquationHeight = 90;
   let result = "\\dot{\\rho} = q_1";
