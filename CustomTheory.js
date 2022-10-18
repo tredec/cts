@@ -366,7 +366,7 @@ var t5000 = T(5000);
 
 var init = () => {
   currency = theory.createCurrency();
-currency.value = BigNumber.from("1.01e400");
+currency.value = BigNumber.from("1.01e175");
 
   ///////////////////
   // Regular Upgrades
