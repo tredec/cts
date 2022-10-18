@@ -592,7 +592,7 @@ var getTertiaryEquation = () => {
   result += ",&10^{\\lfloor log_2(n-1) \\rfloor}T_n = ";
   result += rhoBoost.toString(0);
 
-if(diffterm.level >0{
+if(diffterm.level >0) {
   result += ",&q = ";
   result += q.toString();
 }
