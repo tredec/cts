@@ -390,7 +390,7 @@ var init = () => {
   {
     let getDesc = (level) => "q_3=" + getQ3(level).toString(2);
     let getInfo = (level) => "q_3=" + getQ3(level).toString(2);
-    q3 = theory.createUpgrade(2, currency, new ExponentialCost(1e150, Math.log2(700)));
+    q3 = theory.createUpgrade(2, currency, new ExponentialCost(1e140, Math.log2(3000)));
     q3.getDescription = (_) => Utils.getMath(getDesc(q3.level));
     q3.getInfo = (amount) => Utils.getMathTo(getInfo(q3.level), getInfo(q3.level + amount));
   }
@@ -552,14 +552,14 @@ var getPrimaryEquation = () => {
   theory.primaryEquationHeight = 90;
   let result = "\\dot{\\rho} = q_1";
 
-  if (q1exp.level == 1) result += "^{1.02}";
-  if (q1exp.level == 2) result += "^{1.04}";
-  if (q1exp.level == 3) result += "^{1.06}";
+  if (q1exp.level == 1) result += "^{1.0175}";
+  if (q1exp.level == 2) result += "^{1.035}";
+  if (q1exp.level == 3) result += "^{1.0525}";
 
   result += "q_2";
 
   result += "10^{\\lfloor log_2(n-1) \\rfloor}T_n";
-
+  if(q3term.level >0)result +="^{0.7+q_3}";
   if (diffterm.level > 0) {
     result += "q \\\\\\ ";
     result += "\\dot{q} = ";
@@ -608,7 +608,7 @@ function updateT() {
   let t_nm1 = T(sum - 1);
   maxDiff = Math.max(t_n - t_nm1, maxDiff, ...max.slice(0, sum - 1));
 
-  rhoBoost = BigNumber.TEN.pow(BigNumber.from(Math.floor(Math.log2(sum - 1)))) * BigNumber.from(t_n);
+  rhoBoost = BigNumber.TEN.pow(BigNumber.from(Math.floor(Math.log2(sum - 1)))) * BigNumber.from(t_n).pow(q3term.level > 0 ? BigNumber.from(0.7)+getQ3(q3.level) : BigNumber.ZERO);
 
   if (diffterm.level === 1) qdot = BigNumber.from(t_n - t_nm1);
   else if (diffterm.level === 2) qdot = BigNumber.from(maxDiff);
@@ -638,7 +638,7 @@ var getQ3 = (level) => level * BigNumber.from(0.01);
 var getC1 = (level) => Utils.getStepwisePowerSum(level, 5, 10, 0);
 var getC2 = (level) => BigNumber.from(getVarVal(level, 15));
 var getC3 = (level) => BigNumber.from(getVarVal(level, 20));
-var getQ1Exp = (level) => BigNumber.from(1 + 0.02 * level);
-var getQExp = (level) => BigNumber.from(1 + 0.005 * level);
+var getQ1Exp = (level) => BigNumber.from(1 + 0.0175 * level);
+var getQExp = (level) => BigNumber.from(1 + 0.0025 * level);
 
 init();
