@@ -394,6 +394,7 @@ currency.value = BigNumber.from("1.01e400");
     q3 = theory.createUpgrade(2, currency, new ExponentialCost(1e140, Math.log2(3000)));
     q3.getDescription = (_) => Utils.getMath(getDesc(q3.level));
     q3.getInfo = (amount) => Utils.getMathTo(getInfo(q3.level), getInfo(q3.level + amount));
+q3.bought = (_) => (updateT_flag = true);
   }
 
   // c1
