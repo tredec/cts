@@ -459,7 +459,7 @@ q3.bought = (_) => (updateT_flag = true);
     q3term = theory.createMilestoneUpgrade(3, 1);
     q3term.description = Localization.getUpgradeAddTermDesc("q_3");
     q3term.info = Localization.getUpgradeAddTermInfo("q_3");
-    q3term.boughtOrRefunded = (_) => updateAvailability();
+    q3term.boughtOrRefunded = (_) =>{ updateAvailability();updateT_flag=true;} 
   }
   {
     diffterm = theory.createMilestoneUpgrade(4, 2);
