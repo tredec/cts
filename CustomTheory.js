@@ -593,10 +593,10 @@ var getPrimaryEquation = () => {
   if (qexp.level > 0) result += `^{${getQExp(qexp.level).toString(4)}}`;
   result += "A";
 
-  result += "\\\\\\ ";
+  result += "\\\\\\\\ ";
 
   if (diffterm.level > 0) {
-    result += "\\qquad\\qquad\\qquad\\qquad\\dot{q} = ";
+    result += "\\qquad\\qquad\\qquad\\qquad\\quad\\dot{q} = ";
     if (diffterm.level === 1) result += "(T_n - T_{n-1})";
     if (diffterm.level === 2) result += "\\max(T_n - T_{n-1})";
     if (q3term.level > 0) result += "(\\min(T_n, T_{5000})^{4})^{q_3}";
