@@ -570,7 +570,7 @@ var setInternalState = (state) => {
   updateT_flag = true;
 };
 var getPrimaryEquation = () => {
-  theory.primaryEquationHeight = 120;
+  theory.primaryEquationHeight =diffterm.level > 0 ? 200 : 120;
   theory.primaryEquationScale = 0.9;
   let result = "";
   result += "T_{2^k+i}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
@@ -587,7 +587,7 @@ var getPrimaryEquation = () => {
 
   if (diffterm.level > 0) {
     result += "\\\\\\\\ ";
-    result += "\\dot{q} = ";
+    result += "\\qquad\\qquad\\dot{q} = ";
     if (diffterm.level === 1) result += "(T_n - T_{n-1})";
     if (diffterm.level === 2) result += "\\max(T_n - T_{n-1})";
     if (q3term.level > 0) result += "(\\min(T_n, T_{5000})^{4})^{q_3}";
