@@ -597,8 +597,8 @@ var getPrimaryEquation = () => {
   result += "\\\\\\\\ ";
 
   if (diffterm.level > 0) {
-    if (diffterm.level === 1) result +="\\qquad\\qquad\\qquad\\qquad\\qquad\\dot{q} = "+ "(T_n - T_{n-1})";
-    else if (diffterm.level === 2) result += "\\qquad\\qquad\\qquad\\qquad\\dot{q} = "+ "\\max(T_n - T_{n-1})";
+    if (diffterm.level === 1) result +="\\qquad\\qquad\\qquad\\qquad\\quad\\dot{q} = "+ "(T_n - T_{n-1})";
+    else if (diffterm.level === 2 && q3term.level === 0) result += "\\qquad\\qquad\\qquad\\qquad\\dot{q} = "+ "\\max(T_n - T_{n-1})";
     else if (q3term.level > 0) result += "\\qquad\\dot{q} = "+ "\\max(T_n - T_{n-1})" + "(\\min(T_n, T_{5000})^{4})^{q_3}";
   }
 
