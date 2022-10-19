@@ -482,6 +482,7 @@ var init = () => {
       updateAvailability();
       updateT_flag = true;
       theory.invalidateSecondaryEquation();
+       theory.invalidatePrimaryEquation();
     };
   }
   {
@@ -580,11 +581,11 @@ var setInternalState = (state) => {
   updateT_flag = true;
 };
 var getPrimaryEquation = () => {
-  theory.primaryEquationHeight =diffterm.level > 0 ? 200 : 120;
+  theory.primaryEquationHeight =diffterm.level > 0 ? 200 : 130;
   theory.primaryEquationScale = 0.9;
   let result = "";
   result += "T_{2^k+i}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\\\\\ ";
-  result += "\\qquad\\qquad\\qquad\\qquad\\qquad\\quad \\dot{\\rho} = q_1";
+  result += "\\qquad\\qquad\\qquad\\qquad\\qquad\\dot{\\rho} = q_1";
 
   if (q1exp.level > 0) result += `^{${getQ1Exp(q1exp.level).toString(3)}}`;
 
@@ -596,10 +597,9 @@ var getPrimaryEquation = () => {
   result += "\\\\\\\\ ";
 
   if (diffterm.level > 0) {
-    result += "\\qquad\\qquad\\qquad\\qquad\\quad\\dot{q} = ";
-    if (diffterm.level === 1) result += "(T_n - T_{n-1})";
-    if (diffterm.level === 2) result += "\\max(T_n - T_{n-1})";
-    if (q3term.level > 0) result += "(\\min(T_n, T_{5000})^{4})^{q_3}";
+    if (diffterm.level === 1) result +="\\qquad\\qquad\\qquad\\qquad\\qquad\\dot{q} = "+ "(T_n - T_{n-1})";
+    else if (diffterm.level === 2) result += "\\qquad\\qquad\\qquad\\qquad\\dot{q} = "+ "\\max(T_n - T_{n-1})";
+    else if (q3term.level > 0) result += "\\qquad\\dot{q} = "+ "\\max(T_n - T_{n-1})" + "(\\min(T_n, T_{5000})^{4})^{q_3}";
   }
 
   // result += "A\\\\\\\\";
