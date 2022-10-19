@@ -22,7 +22,8 @@ var qdot = BigNumber.ZERO;
 
 var updateT_flag = false;
 
-var t_n = 0;
+
+var t5000 = T(5000);
 
 var achievement1, achievement2;
 var chapter1, chapter2;
@@ -364,7 +365,8 @@ var max = [
   5008, 5984, 5314, 2964, 850, 186, 280, 346, 444, 626, 760, 666, 542, 652, 906, 1136, 1512, 1986, 2040, 1402, 734, 652, 906, 1136, 1514
 ];
 
-var t5000 = T(5000);
+var testButton
+
 
 var init = () => {
   currency = theory.createCurrency();
@@ -426,6 +428,14 @@ var init = () => {
     c3.getDescription = (_) => Utils.getMath(getDesc(c3.level));
     c3.getInfo = (amount) => Utils.getMathTo(getInfo(c3.level), getInfo(c3.level + amount));
     c3.bought = (_) => (updateT_flag = true);
+  }
+    {
+    let getDesc = (level) => "Increase rho by e5";
+    let getInfo = (level) => "Increase rho by e5";
+    testButton = theory.createUpgrade(5, currency, new ExponentialCost(0, Math.log2(1)));
+    testButton.getDescription = (_) => Utils.getMath(getDesc(testButton.level));
+    testButton.getInfo = (amount) => Utils.getMathTo(getInfo(testButton.level), getInfo(testButton.level + amount));
+    testButton.bought = (_) => currency.value *= BigNumber.from(1e5);
   }
 
   /////////////////////
@@ -573,7 +583,7 @@ var getPrimaryEquation = () => {
   theory.primaryEquationHeight =diffterm.level > 0 ? 200 : 120;
   theory.primaryEquationScale = 0.9;
   let result = "";
-  result += "T_{2^k+i}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
+  result += "T_{2^k+i}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\\\ ";
   result += "\\qquad\\qquad\\qquad\\qquad\\qquad\\quad \\dot{\\rho} = q_1";
 
   if (q1exp.level > 0) result += `^{${getQ1Exp(q1exp.level).toString(3)}}`;
@@ -637,7 +647,7 @@ function updateT() {
     rhoBoost = sum;
     return;
   }
-  t_n = T(sum);
+  let t_n = T(sum);
   let t_nm1 = T(sum - 1);
   maxDiff = Math.max(t_n - t_nm1, maxDiff, ...max.slice(0, sum - 1));
 
