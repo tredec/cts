@@ -432,7 +432,7 @@ var init = () => {
     {
     let getDesc = (level) => "Increase rho by e5";
     let getInfo = (level) => "Increase rho by e5";
-    testButton = theory.createUpgrade(5, currency, new ExponentialCost(0, Math.log2(1)));
+    testButton = theory.createUpgrade(6, currency, new ExponentialCost(0, Math.log2(1)));
     testButton.getDescription = (_) => Utils.getMath(getDesc(testButton.level));
     testButton.getInfo = (amount) => Utils.getMathTo(getInfo(testButton.level), getInfo(testButton.level + amount));
     testButton.bought = (_) => currency.value *= BigNumber.from(1e5);
