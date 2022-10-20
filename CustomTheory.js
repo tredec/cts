@@ -573,7 +573,7 @@ var getSecondaryEquation = () => {
   theory.secondaryEquationHeight = 50;
   let result = "\\begin{matrix}";
   result += "A = 10^{\\lfloor log_2(n) \\rfloor}T_n";
-  if (q3term.level > 0) result += "^{0.7+q_3}";
+  if (q3term.level > 0) result += "^{0.6+q_3}";
   result += `\\\\\\\\ n = c_1`;
   if (cterm.level > 0) result += " + c_2";
   if (cterm.level > 1) result += " + c_3";
