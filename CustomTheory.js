@@ -23,7 +23,7 @@ var qdot = BigNumber.ZERO;
 var updateT_flag = false;
 
 var t5000 = T(5000);
-var lastStartSearch = 0;
+var lastEndSearch = 0;
 
 var achievement1, achievement2;
 var chapter1, chapter2;
@@ -785,11 +785,13 @@ var postPublish = () => {
   updateT_flag = true;
   theory.invalidateTertiaryEquation();
 };
-var getInternalState = () => `${q}`;
+var getInternalState = () => `${q} ${maxDiff} ${lastEndSearch} `;
 
 var setInternalState = (state) => {
   let values = state.split(" ");
   if (values.length > 0) q = parseBigNumber(values[0]);
+  if (values.length > 1) maxDiff = parseBigNumber(values[1]);
+  if (values.length > 2) lastEndSearch = parseBigNumber(values[2]);
   updateT_flag = true;
 };
 
@@ -862,9 +864,9 @@ function updateT() {
   }
   let t_n = T(n);
   let t_nm1 = T(n - 1);
-  maxDiff = Math.max(maxDiff, ...max.slice(lastStartSearch, n + 1));
+  maxDiff = Math.max(maxDiff, ...max.slice(lastEndSearch, n + 1));
 
-  lastStartSearch = n - 1;
+  lastEndSearch = n - 1;
 
   rhoBoost = BigNumber.TEN.pow(BigNumber.from(Math.floor(Math.log2(n)))) * BigNumber.from(t_n).pow(q3term.level > 0 ? BigNumber.from(0.6) + getQ3(q3.level) : BigNumber.ONE);
 
@@ -899,4 +901,3 @@ var getQ1Exp = (level) => BigNumber.from(1 + 0.017 * level);
 var getQExp = (level) => BigNumber.from(1 + 0.0025 * level);
 
 init();
-  
