@@ -583,7 +583,6 @@ let max = [
 
 var init = () => {
   currency = theory.createCurrency();
-  currency.value = BigNumber.from("1e1500")
   ////////////////////
   // Regular Upgrades
 
@@ -763,7 +762,7 @@ var updateAvailability = () => {
 };
 
 var tick = (elapsedTime, multiplier) => {
-  let dt = BigNumber.from(elapsedTime * multiplier * 5000);
+  let dt = BigNumber.from(elapsedTime * multiplier);
   let bonus = theory.publicationMultiplier;
 
   if (updateT_flag) {
