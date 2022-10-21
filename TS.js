@@ -25,9 +25,6 @@ var updateT_flag = false;
 var t5000 = T(5000);
 var lastEndSearch = 0;
 
-var achievement1, achievement2;
-var chapter1, chapter2;
-
 let max = [
   0, 1, 2, 4, 4, 4, 8, 12, 8, 4, 8, 12, 12, 16, 28, 32, 16, 4, 8, 12, 12, 16, 28, 32, 20, 16, 28, 36, 40, 60, 88, 80, 32, 4, 8, 12, 12, 16, 28, 32, 20, 16, 28, 36, 40, 60, 88, 80, 36, 16, 28, 36, 40, 60, 88, 84, 56,
   60, 92, 112, 140, 208, 256, 192, 64, 4, 8, 12, 12, 16, 28, 32, 20, 16, 28, 36, 40, 60, 88, 80, 36, 16, 28, 36, 40, 60, 88, 84, 56, 60, 92, 112, 140, 208, 256, 192, 68, 16, 28, 36, 40, 60, 88, 84, 56, 60, 92, 112,
@@ -740,15 +737,6 @@ var init = () => {
     }
   }
 
-  //   /////////////////
-  //   //// Achievements
-  //   achievement1 = theory.createAchievement(0, "Achievement 1", "Description 1", () => q1.level > 1);
-  //   achievement2 = theory.createSecretAchievement(1, "Achievement 2", "Description 2", "Maybe you should buy two levels of q2?", () => q2.level > 1);
-
-  //   ///////////////////
-  //   //// Story chapters
-  //   chapter1 = theory.createStoryChapter(0, "My First Chapter", "This is line 1,\nand this is line 2.\n\nNice.", () => q1.level > 0);
-  //   chapter2 = theory.createStoryChapter(1, "My Second Chapter", "This is line 1 again,\nand this is line 2... again.\n\nNice again.", () => q2.level > 0);
 
   updateAvailability();
 };
