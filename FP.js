@@ -102,8 +102,9 @@ var init = () => {
     fractalTerm.boughtOrRefunded = (_) => {
       theory.invalidatePrimaryEquation();
       theory.invalidateTertiaryEquation();
+updateAvailability();
     };
-fractalTerm.boughtOrRefunded = (_) => updateAvailability();
+
   }
 
   /////////////////
