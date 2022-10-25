@@ -1,4 +1,4 @@
-import { ExponentialCost, FreeCost, LinearCost } from "./api/Costs";
+Mimport { ExponentialCost, FreeCost, LinearCost } from "./api/Costs";
 import { Localization } from "./api/Localization";
 import { BigNumber } from "./api/BigNumber";
 import { theory } from "./api/Theory";
@@ -70,7 +70,7 @@ var init = () => {
 
   ///////////////////////
   //// Milestone Upgrades
-  theory.setMilestoneCost(new LinearCost(2.5, 2.5));
+  theory.setMilestoneCost(new LinearCost(1, 1));
 
   {
     c1Exp = theory.createMilestoneUpgrade(0, 3);
