@@ -15,7 +15,7 @@ var rhodot = BigNumber.ZERO;
 var q = BigNumber.ONE;
 var r = BigNumber.ONE;
 var c1, c2, q1, q2, r1, r2, n1, n2, n3;
-var c1Exp, rTnExp, fractalTerm;
+var c1Exp, tnexp,unexp, fractalTerm;
 
 var sum = 1;
 var prevSum = 1;
@@ -45,7 +45,7 @@ var init = () => {
   // c1
   {
     let getDesc = (level) => "c_1=" + getC1(level).toString(0);
-    c1 = theory.createUpgrade(0, currency, new FirstFreeCost(new ExponentialCost(15, Math.log2(1.34))));
+    c1 = theory.createUpgrade(0, currency, new FirstFreeCost(new ExponentialCost(2, Math.log2(1.34))));
     c1.getDescription = (_) => Utils.getMath(getDesc(c1.level));
     c1.getInfo = (amount) => Utils.getMathTo(getDesc(c1.level), getDesc(c1.level + amount));
   }
@@ -54,7 +54,7 @@ var init = () => {
   {
     let getDesc = (level) => "c_2=2^{" + level + "}";
     let getInfo = (level) => "c_2=" + getC2(level).toString(0);
-    c2 = theory.createUpgrade(1, currency, new ExponentialCost(100, Math.log2(9)));
+    c2 = theory.createUpgrade(1, currency, new ExponentialCost(10, Math.log2(9)));
     c2.getDescription = (_) => Utils.getMath(getDesc(c2.level));
     c2.getInfo = (amount) => Utils.getMathTo(getInfo(c2.level), getInfo(c2.level + amount));
   }
@@ -62,7 +62,7 @@ var init = () => {
   {
     let getDesc = (level) => "q_1=" + getQ1(level).toString(0);
     let getInfo = (level) => "q_1=" + getQ1(level).toString(0);
-    q1 = theory.createUpgrade(2, currency, new FirstFreeCost(new ExponentialCost(1e30, Math.log2(20))));
+    q1 = theory.createUpgrade(2, currency, new FirstFreeCost(new ExponentialCost(1e25, Math.log2(15))));
     q1.getDescription = (_) => Utils.getMath(getDesc(q1.level));
     q1.getInfo = (amount) => Utils.getMathTo(getInfo(q1.level), getInfo(q1.level + amount));
   }
@@ -70,7 +70,7 @@ var init = () => {
   {
     let getDesc = (level) => "q_2=2^{" + level + "}";
     let getInfo = (level) => "q_2=" + getQ2(level).toString(0);
-    q2 = theory.createUpgrade(3, currency, new ExponentialCost(1e45, Math.log2(3e2)));
+    q2 = theory.createUpgrade(3, currency, new ExponentialCost(1e35, Math.log2(2e2)));
     q2.getDescription = (_) => Utils.getMath(getDesc(q2.level));
     q2.getInfo = (amount) => Utils.getMathTo(getInfo(q2.level), getInfo(q2.level + amount));
   }
@@ -94,7 +94,7 @@ var init = () => {
   {
     let getDesc = (level) => "n_1=" + getN1(level).toString(0);
     let getInfo = (level) => "n_1=" + getN1(level).toString(0);
-    n1 = theory.createUpgrade(6, currency, new ExponentialCost(1000, Math.log2(5e4)));
+    n1 = theory.createUpgrade(6, currency, new ExponentialCost(10, Math.log2(5e4)));
     n1.getDescription = (_) => Utils.getMath(getDesc(n1.level));
     n1.getInfo = (amount) => Utils.getMathTo(getInfo(n1.level), getInfo(n1.level + amount));
     n1.bought = (_) => (updateN_flag = true);
@@ -120,14 +120,39 @@ var init = () => {
 
   /////////////////////
   // Permanent Upgrades
-  theory.createPublicationUpgrade(0, currency, 1e10);
+  theory.createPublicationUpgrade(0, currency, 1e8);
   theory.createBuyAllUpgrade(1, currency, 1);
   theory.createAutoBuyerUpgrade(2, currency, 1);
 
   ///////////////////////
   //// Milestone Upgrades
-  theory.setMilestoneCost(new LinearCost(2, 2));
-
+theory.setMilestoneCost(new CustomCost((total) => BigNumber.from(getMilCustomCost(total))));
+ function getMilCustomCost(lvl) {
+    switch (lvl) {
+      case 0:
+        return 12 * 0.1;
+      case 1:
+        return 50 * 0.1;
+      case 2:
+        return 125 * 0.1;
+      case 3:
+        return 150 * 0.1;
+      case 4:
+        return 200 * 0.1;
+      case 5:
+        return 325 * 0.1;
+      case 6:
+        return 375 * 0.1;
+      case 7:
+        return 400 * 0.1;
+      case 8:
+        return 1175 * 0.1;
+      case 9:
+        return 1250 * 0.1;
+      default:
+        return 1400 * 0.1;
+    }
+  }
   {
     c1Exp = theory.createMilestoneUpgrade(0, 3);
     c1Exp.description = Localization.getUpgradeIncCustomExpDesc("c_1", "0.01");
@@ -136,10 +161,10 @@ var init = () => {
   }
 
   {
-    rTnExp = theory.createMilestoneUpgrade(1, 4);
-    rTnExp.description = Localization.getUpgradeIncCustomExpDesc("T_n", "0.5");
-    rTnExp.info = Localization.getUpgradeIncCustomExpInfo("T_n", "0.5");
-    rTnExp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
+    tnexp = theory.createMilestoneUpgrade(1, 4);
+    tnexp.description = Localization.getUpgradeIncCustomExpDesc("T_n", "0.5");
+    tnexp.info = Localization.getUpgradeIncCustomExpInfo("T_n", "0.5");
+    tnexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
   }
   {
     fractalTerm = theory.createMilestoneUpgrade(2, 2);
@@ -160,9 +185,16 @@ var init = () => {
       theory.invalidateTertiaryEquation();
       updateAvailability();
     };
+    fractalTerm.canBeRefunded=()=>unexp.level ===0
+  }
+    {
+    unexp = theory.createMilestoneUpgrade(3,2);
+    unexp.description = Localization.getUpgradeIncCustomExpDesc("U_n", "0.25");
+    unexp.info = Localization.getUpgradeIncCustomExpInfo("U_n", "0.25");
+    unexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
   }
   {
-    nterm = theory.createMilestoneUpgrade(3, 2);
+    nterm = theory.createMilestoneUpgrade(4, 2);
     nterm.getDescription = (_) => {
       if (nterm.level === 0) {
         return Localization.getUpgradeAddTermDesc("n_2");
@@ -232,14 +264,16 @@ function updateN() {
 
 var updateAvailability = () => {
   q1.isAvailable = fractalTerm.level > 0;
+q2.isAvailable = fractalTerm.level > 0;
   r1.isAvailable = fractalTerm.level > 1;
   r2.isAvailable = fractalTerm.level > 1;
   n2.isAvailable = nterm.level > 0;
   n3.isAvailable = nterm.level > 1;
+  unexp.isAvailable = fractalTerm.level > 1
 };
 
 var tick = (elapsedTime, multiplier) => {
-  let dt = BigNumber.from(elapsedTime * multiplier * 10);
+  let dt = BigNumber.from(elapsedTime * multiplier);
   let bonus = theory.publicationMultiplier;
 
   if (updateN_flag) {
@@ -255,7 +289,7 @@ var tick = (elapsedTime, multiplier) => {
   let rdot = (getR1(r1.level) * getR2(r2.level) * (1 + U_n.pow(1.5))) / (1 + T_n);
   r += fractalTerm.level > 1 ? rdot * dt : 0;
 
-  rhodot = bonus * getC1(c1.level).pow(getC1Exponent(c1Exp.level)) * getC2(c2.level) * T_n.pow(1 + rTnExp.level) * BigNumber.THREE.pow(BigNumber.from(sum).log2().floor());
+  rhodot = bonus * getC1(c1.level).pow(getC1Exponent(c1Exp.level)) * getC2(c2.level) * T_n.pow(1 + tnexp.level) * BigNumber.THREE.pow(BigNumber.from(sum).log2().floor());
   rhodot *= fractalTerm.level > 0 ? q : 1;
   rhodot *= fractalTerm.level > 1 ? r * U_n : 1;
 
@@ -284,7 +318,7 @@ var getPrimaryEquation = () => {
   theory.primaryEquationHeight = 110;
   theory.primaryEquationScale = fractalTerm.level === 0 ? 1 : 0.9;
   let result = `\\dot{\\rho} = c_1^{${c1Exp.level === 0 ? "" : getC1Exponent(c1Exp.level).toString(2)}}c_2`;
-  result += `3^{\\lfloor log_2(n) \\rfloor}T_n^{${(1 + rTnExp.level).toString()}}`;
+  result += `3^{\\lfloor log_2(n) \\rfloor}T_n^{${tnexp.level>0?(1 + tnexp.level/2).toString():""}}`;
   if (fractalTerm.level > 1) result += "U_n";
   if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "") + "\\\\";
   if (fractalTerm.level > 0) result += " \\dot{q} = q_1q_2ln(S_n)^2\\rho^{0.1}";
@@ -311,8 +345,8 @@ var getTertiaryEquation = () => {
   result += "\\\\ {}\\end{matrix}";
   return result;
 };
-var getPublicationMultiplier = (tau) => tau.pow(1.1) / BigNumber.TEN;
-var getPublicationMultiplierFormula = (symbol) => "\\frac{{" + symbol + "}^{1.1}}{10}";
+var getPublicationMultiplier = (tau) => tau.pow(1.1) / BigNumber.TWO;
+var getPublicationMultiplierFormula = (symbol) => "\\frac{{" + symbol + "}^{1.1}}{2}";
 var getTau = () => currency.value.pow(0.1);
 var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(10), currency.symbol];
 var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.value.abs()).log10().toNumber();
