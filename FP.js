@@ -102,6 +102,7 @@ var init = () => {
     fractalTerm.boughtOrRefunded = (_) => {
       theory.invalidatePrimaryEquation();
       theory.invalidateTertiaryEquation();
+updateAvailability()
     };
   }
 
@@ -165,7 +166,7 @@ var tick = (elapsedTime, multiplier) => {
     updateN_flag = false;
     theory.invalidateTertiaryEquation();
   }
-  let qdot = dt * getQ1(q1.level) * S_n.log().pow(3) * currency.value.pow(0.05);
+  let qdot = dt * getQ1(q1.level) * S_n.log().pow(2) * currency.value.pow(0.05);
   q += fractalTerm.level > 0 ? qdot : 0;
 
   rhodot = dt * bonus * getC1(c1.level).pow(getC1Exponent(c1Exp.level)) * getC2(c2.level) * T_n.pow(2 + rTnExp.level / 2) * BigNumber.FIVE.pow(BigNumber.from(sum).log2().floor());
@@ -193,7 +194,7 @@ var getPrimaryEquation = () => {
   let result = `\\dot{\\rho} = c_1^{${c1Exp.level === 0 ? "" : getC1Exponent(c1Exp.level).toString(2)}}c_2`;
   result += `5^{\\lfloor log_2(n) \\rfloor}T_n^{${(2 + rTnExp.level / 2).toString()}}`;
   if (fractalTerm.level === 1) result += "q\\\\\\";
-  if (fractalTerm.level === 1) result += " \\dot{q} = q_1ln(S_n)^3\\rho^{0.05}";
+  if (fractalTerm.level === 1) result += " \\dot{q} = q_1ln(S_n)^2\\rho^{0.05}";
   return result;
 };
 
