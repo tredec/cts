@@ -70,7 +70,7 @@ var init = () => {
 
   ///////////////////////
   //// Milestone Upgrades
-  theory.setMilestoneCost(new LinearCost(1, 1));
+  theory.setMilestoneCost(new LinearCost(1, 2));
 
   {
     c1Exp = theory.createMilestoneUpgrade(0, 3);
@@ -80,7 +80,7 @@ var init = () => {
   }
 
   {
-    rTnExp = theory.createMilestoneUpgrade(1, 2);
+    rTnExp = theory.createMilestoneUpgrade(1, 4);
     rTnExp.description = Localization.getUpgradeIncCustomExpDesc("T_n", "0.5");
     rTnExp.info = Localization.getUpgradeIncCustomExpInfo("T_n", "0.5");
     rTnExp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
@@ -102,9 +102,7 @@ var init = () => {
     fractalTerm.boughtOrRefunded = (_) => {
       theory.invalidatePrimaryEquation();
       theory.invalidateTertiaryEquation();
-updateAvailability();
     };
-
   }
 
   /////////////////
@@ -167,7 +165,8 @@ var tick = (elapsedTime, multiplier) => {
     updateN_flag = false;
     theory.invalidateTertiaryEquation();
   }
-  q += fractalTerm.level > 0 ? getQ1(q1.level) * (S_n / T_n) * currency.value.pow(0.05) : 0;
+  let qdot = dt * getQ1(q1.level) * S_n.log().pow(3) * currency.value.pow(0.05);
+  q += fractalTerm.level > 0 ? qdot : 0;
 
   rhodot = dt * bonus * getC1(c1.level).pow(getC1Exponent(c1Exp.level)) * getC2(c2.level) * T_n.pow(2 + rTnExp.level / 2) * BigNumber.FIVE.pow(BigNumber.from(sum).log2().floor());
   rhodot *= fractalTerm.level > 0 ? q : 1;
@@ -194,7 +193,7 @@ var getPrimaryEquation = () => {
   let result = `\\dot{\\rho} = c_1^{${c1Exp.level === 0 ? "" : getC1Exponent(c1Exp.level).toString(2)}}c_2`;
   result += `5^{\\lfloor log_2(n) \\rfloor}T_n^{${(2 + rTnExp.level / 2).toString()}}`;
   if (fractalTerm.level === 1) result += "q\\\\\\";
-  if (fractalTerm.level === 1) result += " \\qquad \\dot{q} = q_1\\frac{S_n}{T_n}\\rho^{0.05}";
+  if (fractalTerm.level === 1) result += " \\dot{q} = q_1ln(S_n)^3\\rho^{0.05}";
   return result;
 };
 
@@ -215,8 +214,8 @@ var getTertiaryEquation = () => {
   result += "\\\\ {}\\end{matrix}";
   return result;
 };
-var getPublicationMultiplier = (tau) => tau.pow(0.9) / BigNumber.TEN;
-var getPublicationMultiplierFormula = (symbol) => "\\frac{{" + symbol + "}^{0.9}}{10}";
+var getPublicationMultiplier = (tau) => tau.pow(1.3) / BigNumber.TEN;
+var getPublicationMultiplierFormula = (symbol) => "\\frac{{" + symbol + "}^{1.3}}{10}";
 var getTau = () => currency.value.pow(0.1);
 var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(10), currency.symbol];
 var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.value.abs()).log10().toNumber();
