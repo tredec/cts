@@ -321,7 +321,7 @@ var getPrimaryEquation = () => {
   result += `3^{\\lfloor log_2(n) \\rfloor}T_n^{${tnexp.level>0?(1 + tnexp.level/2).toString():""}}`;
   if (fractalTerm.level > 1) result += "U_n";
   if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "") + "\\\\";
-  if (fractalTerm.level > 0) result += " \\dot{q} = q_1q_2ln(S_n)^2\\rho^{0.1}";
+  if (fractalTerm.level > 0) result += " \\dot{q} = q_1q_2\\ln(S_n)^2\\rho^{0.1}";
   if (fractalTerm.level > 1) result += "\\\\ \\dot{r} = r_1r_2\\frac{1+U_n^{1.5}}{1+T_n}";
   return result;
 };
@@ -345,8 +345,8 @@ var getTertiaryEquation = () => {
   result += "\\\\ {}\\end{matrix}";
   return result;
 };
-var getPublicationMultiplier = (tau) => tau.pow(1.1) / BigNumber.TWO;
-var getPublicationMultiplierFormula = (symbol) => "\\frac{{" + symbol + "}^{1.1}}{2}";
+var getPublicationMultiplier = (tau) => tau.pow(1.1);
+var getPublicationMultiplierFormula = (symbol) => "{{" + symbol + "}^{1.1}";
 var getTau = () => currency.value.pow(0.1);
 var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(10), currency.symbol];
 var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.value.abs()).log10().toNumber();
