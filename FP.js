@@ -345,8 +345,8 @@ var getTertiaryEquation = () => {
   result += "\\\\ {}\\end{matrix}";
   return result;
 };
-var getPublicationMultiplier = (tau) => tau.pow(1.1);
-var getPublicationMultiplierFormula = (symbol) => "{{" + symbol + "}^{1.1}";
+var getPublicationMultiplier = (tau) => tau.pow(1.1)*BigNumber.TWO;
+var getPublicationMultiplierFormula = (symbol) => "3" + symbol + "2^{1.1}";
 var getTau = () => currency.value.pow(0.1);
 var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(10), currency.symbol];
 var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.value.abs()).log10().toNumber();
