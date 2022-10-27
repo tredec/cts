@@ -329,7 +329,7 @@ var getPrimaryEquation = () => {
   result += `AT_n^{${tnexp.level > 0 ? (1 + tnexp.level / 2).toString() : ""}${terms.level > 2 ? "+s-1.5" : ""}}`;
   if (fractalTerm.level > 1) result += "U_n";
   if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "") + "\\\\";
-  if (fractalTerm.level > 0) result += " \\dot{q} = q_1q_2\\ln(S_n)^2\\rho^{0.1}\\frac{A}{100}";
+  if (fractalTerm.level > 0) result += " \\dot{q} = q_1q_2\\ln(S_n)^2\\rho^{0.1}A/100";
   if (fractalTerm.level > 1) result += `\\\\ \\dot{r} = r_1r_2\\frac{U_n^{${1.25 + unexp.level * 0.25}}A}{1000T_n}`;
   return result;
 };
