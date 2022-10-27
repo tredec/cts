@@ -26,7 +26,7 @@ var U_n = BigNumber.ONE;
 var updateN_flag = true;
 
 //precomputed U_n every 100 generations until 15000 generations
-let un = [
+let un_precomputed = [
   0, 9749, 38997, 92821, 155989, 271765, 371285, 448661, 623957, 808853, 1087061, 1415829, 1485141, 1663893, 1794645, 2068245, 2495829, 2681877, 3235413, 3527445, 4348245, 5600149, 5663317, 5807893, 5940565,
   6200341, 6655573, 6841621, 7178581, 7607701, 8272981, 9793813, 9983317, 10246549, 10727509, 11309845, 12941653, 13288981, 14109781, 15594133, 17392981, 22369685, 22400597, 22488341, 22653269, 22839317, 23231573,
   23488661, 23762261, 24243221, 24801365, 25677461, 26622293, 26830229, 27366485, 27800213, 28714325, 29858837, 30430805, 32081045, 33091925, 35461013, 39175253, 39364757, 39933269, 40196501, 40986197, 42341525,
@@ -97,7 +97,7 @@ var init = () => {
   {
     let getDesc = (level) => "n_1=" + getN1(level).toString(0);
     let getInfo = (level) => "n_1=" + getN1(level).toString(0);
-    n1 = theory.createUpgrade(6, currency, new ExponentialCost(10, Math.log2(5e4)));
+    n1 = theory.createUpgrade(6, currency, new ExponentialCost(1e4, Math.log2(5e4)));
     n1.getDescription = (_) => Utils.getMath(getDesc(n1.level));
     n1.getInfo = (amount) => Utils.getMathTo(getInfo(n1.level), getInfo(n1.level + amount));
     n1.bought = (_) => (updateN_flag = true);
@@ -106,7 +106,7 @@ var init = () => {
   {
     let getDesc = (level) => "n_2=" + getN2(level).toString(0);
     let getInfo = (level) => "n_2=" + getN2(level).toString(0);
-    n2 = theory.createUpgrade(7, currency, new ExponentialCost(1e200, Math.log2(4e3)));
+    n2 = theory.createUpgrade(7, currency, new ExponentialCost(1e205, Math.log2(4e3)));
     n2.getDescription = (_) => Utils.getMath(getDesc(n2.level));
     n2.getInfo = (amount) => Utils.getMathTo(getInfo(n2.level), getInfo(n2.level + amount));
     n2.bought = (_) => (updateN_flag = true);
@@ -115,15 +115,15 @@ var init = () => {
   {
     let getDesc = (level) => "n_3=" + getN3(level).toString(0);
     let getInfo = (level) => "n_3=" + getN3(level).toString(0);
-    n3 = theory.createUpgrade(8, currency, new ExponentialCost(1e275, Math.log2(1.5e3)));
+    n3 = theory.createUpgrade(8, currency, new ExponentialCost(1e280, Math.log2(1.5e3)));
     n3.getDescription = (_) => Utils.getMath(getDesc(n3.level));
     n3.getInfo = (amount) => Utils.getMathTo(getInfo(n3.level), getInfo(n3.level + amount));
     n3.bought = (_) => (updateN_flag = true);
   }
   // s
   {
-    let getDesc = (level) => "n_3=" + getS(level).toString(0);
-    let getInfo = (level) => "n_3=" + getS(level).toString(0);
+    let getDesc = (level) => "s=" + getS(level).toString(2);
+    let getInfo = (level) => "s=" + getS(level).toString(2);
     s = theory.createUpgrade(9, currency, new ExponentialCost(BigNumber.from("1e640"), Math.log2(8e1)));
     s.getDescription = (_) => Utils.getMath(getDesc(s.level));
     s.getInfo = (amount) => Utils.getMathTo(getInfo(s.level), getInfo(s.level + amount));
@@ -214,9 +214,12 @@ var init = () => {
     };
     terms.boughtOrRefunded = (_) => {
       theory.invalidatePrimaryEquation();
+      theory.invalidateSecondaryEquation();
       theory.invalidateTertiaryEquation();
       updateAvailability();
+      updateN_flag = true;
     };
+    terms.canBeRefunded = () => tnexp.level === 0 || terms.level === 3;
   }
 
   /////////////////
@@ -253,7 +256,7 @@ function wt(n) {
 }
 function U(n) {
   let p = n - (n % 100);
-  let temp = prevSum > p ? U_n.toNumber() : un[Math.floor(n / 100)];
+  let temp = prevSum > p ? U_n.toNumber() : un_precomputed[Math.floor(n / 100)];
   for (let i = prevSum > p ? prevSum + 1 : p + 1; i <= n; i++) temp += u(i);
   return temp;
 }
@@ -276,6 +279,7 @@ var updateAvailability = () => {
   n3.isAvailable = terms.level > 1;
   unexp.isAvailable = fractalTerm.level > 1;
   s.isAvailable = terms.level > 2;
+  tnexp.isAvailable = terms.level > 1;
 };
 
 var tick = (elapsedTime, multiplier) => {
@@ -326,18 +330,22 @@ var getPrimaryEquation = () => {
   theory.primaryEquationHeight = 110;
   theory.primaryEquationScale = fractalTerm.level === 0 ? 1 : 0.9;
   let result = `\\dot{\\rho} = c_1c_2`;
-  result += `AT_n^{${tnexp.level > 0 ? (1 + tnexp.level / 2).toString() : ""}${terms.level > 2 ? "+s-1.5" : ""}}`;
+  result += `T_n^{${tnexp.level > 0 || terms.level > 2 ? (1 + tnexp.level / 2 - (terms.level > 2 ? 1.5 : 0)).toString() : ""}${terms.level > 2 ? "+s" : ""}}`;
   if (fractalTerm.level > 1) result += "U_n";
-  if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "") + "\\\\";
-  if (fractalTerm.level > 0) result += " \\dot{q} = q_1q_2\\ln(S_n)^2\\rho^{0.1}A/100";
-  if (fractalTerm.level > 1) result += `\\\\ \\dot{r} = r_1r_2\\frac{U_n^{${1.25 + unexp.level * 0.25}}A}{1000T_n}`;
+  if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "");
+  result += "A\\\\\\\\";
+  if (fractalTerm.level > 0) result += ` \\dot{q} = q_1q_2\\ln(S_n)^{2${terms.level > 2 ? "+s" : ""}}\\rho^{0.1}A/100`;
+  if (fractalTerm.level > 1) result += `\\\\\\\\ \\dot{r} = r_1r_2U_n^{${1.25 + unexp.level * 0.25}}A/(1000T_n)`;
   return result;
 };
 
 var getSecondaryEquation = () => {
+  theory.secondaryEquationHeight = 60;
   let result = "\\begin{matrix}";
-  result += "n = 1+n_1 ,&";
-  result += "A = 10^{\\lfloor log_2(n) \\rfloor},&";
+  result += "n = 1+n_1";
+  if (terms.level > 0) result += "+n_2";
+  if (terms.level > 1) result += "+n_3";
+  result += "\\\\\\\\ A = 10^{\\lfloor log_2(n) \\rfloor}\\;\\;\\;\\;";
   result += theory.latexSymbol + "=\\max\\rho^{0.1}";
   result += "\\\\ {}\\end{matrix}";
   return result;
