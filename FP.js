@@ -327,15 +327,15 @@ var setInternalState = (state) => {
 };
 
 var getPrimaryEquation = () => {
-  theory.primaryEquationHeight = 110;
+  theory.primaryEquationHeight = fractalTerm.level === 0 ? 60 : 110;
   theory.primaryEquationScale = fractalTerm.level === 0 ? 1 : 0.9;
   let result = `\\dot{\\rho} = c_1c_2`;
+  result += "A";
+  if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "");
   result += `T_n^{${tnexp.level > 0 || terms.level > 2 ? (1 + tnexp.level / 2 - (terms.level > 2 ? 1.5 : 0)).toString() : ""}${terms.level > 2 ? "+s" : ""}}`;
   if (fractalTerm.level > 1) result += "U_n";
-  if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "");
-  result += "A\\\\\\\\";
-  if (fractalTerm.level > 0) result += ` \\dot{q} = q_1q_2\\ln(S_n)^{2${terms.level > 2 ? "+s" : ""}}\\rho^{0.1}A/100`;
-  if (fractalTerm.level > 1) result += `\\\\\\\\ \\dot{r} = r_1r_2U_n^{${1.25 + unexp.level * 0.25}}A/(1000T_n)`;
+  if (fractalTerm.level > 0) result += `\\\\\\\\ \\dot{q} = q_1q_2A\\ln(S_n)^{2${terms.level > 2 ? "+s" : ""}}\\rho^{0.1}/100`;
+  if (fractalTerm.level > 1) result += `\\\\\\\\ \\dot{r} = r_1r_2AU_n^{${1.25 + unexp.level * 0.25}}/(1000T_n)`;
   return result;
 };
 
