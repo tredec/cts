@@ -39,6 +39,8 @@ let un_precomputed = [
   374740885, 374931541, 375481621, 375818581, 376608277, 377922133, 378490645, 380196181, 380985877, 383354965, 387323029, 387891541, 388933525, 390220885, 392310037, 396821845
 ];
 
+var stage = 1;
+
 var init = () => {
   currency = theory.createCurrency();
 
@@ -327,19 +329,34 @@ var setInternalState = (state) => {
 };
 
 var getPrimaryEquation = () => {
-  theory.primaryEquationHeight = fractalTerm.level === 0 ? 60 : 110;
-  theory.primaryEquationScale = fractalTerm.level === 0 ? 1 : 0.9;
-  let result = `\\dot{\\rho} = c_1c_2`;
-  result += "A";
-  if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "");
-  result += `T_n^{${tnexp.level > 0 || terms.level > 2 ? (1 + tnexp.level / 2 - (terms.level > 2 ? 1.5 : 0)).toString() : ""}${terms.level > 2 ? "+s" : ""}}`;
-  if (fractalTerm.level > 1) result += "U_n";
-  if (fractalTerm.level > 0) result += `\\\\\\\\ \\dot{q} = q_1q_2A\\ln(S_n)^{2${terms.level > 2 ? "+s" : ""}}\\rho^{0.1}/100`;
-  if (fractalTerm.level > 1) result += `\\\\\\\\ \\dot{r} = r_1r_2AU_n^{${1.25 + unexp.level * 0.25}}/(1000T_n)`;
-  return result;
+  if (stage === 0) {
+    theory.primaryEquationHeight = 240;
+    theory.primaryEquationScale = 1;
+    let result = "T_{2^k+i}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
+    if (fractalTerm.level > 1) {
+      result += "wt_n = n-\\sum_{k=1}^{\\infty}\\left\\lfloor\\frac{n}{2^k}\\right\\rfloor \\\\ ";
+      result += "u_0 = 0,\\;\\; u_1 = 1,\\;\\; u_n=4\\cdot 3^{wt_{n-1}-1} \\\\ ";
+      result += "U_n = \\sum_{i=0}^n u_i \\\\\\\\ ";
+    }
+    if (fractalTerm.level > 0) result += "S_n = 3^n";
+    return result;
+  } else {
+    theory.primaryEquationHeight = fractalTerm.level === 0 ? 60 : 110;
+    theory.primaryEquationScale = fractalTerm.level === 0 ? 1 : 0.9;
+    let result = `\\dot{\\rho} = c_1c_2`;
+    result += "A";
+    if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "");
+    result += `T_n^{${tnexp.level > 0 || terms.level > 2 ? (1 + tnexp.level / 2 - (terms.level > 2 ? 1.5 : 0)).toString() : ""}${terms.level > 2 ? "+s" : ""}}`;
+    if (fractalTerm.level > 1) result += "U_n";
+    if (fractalTerm.level > 0) result += `\\\\\\\\ \\dot{q} = q_1q_2A\\ln(S_n)^{2${terms.level > 2 ? "+s" : ""}}\\rho^{0.1}/100`;
+    if (fractalTerm.level > 1) result += `\\\\\\\\ \\dot{r} = r_1r_2AU_n^{${1.25 + unexp.level * 0.25}}/(1000T_n)`;
+    return result;
+  }
 };
 
 var getSecondaryEquation = () => {
+  if (stage === 0) return "";
+
   theory.secondaryEquationHeight = 60;
   let result = "\\begin{matrix}";
   result += "n = 1+n_1";
@@ -352,16 +369,36 @@ var getSecondaryEquation = () => {
 };
 var getTertiaryEquation = () => {
   let result = "\\begin{matrix}";
-  result += "n =" + BigNumber.from(sum).toString(0) + ",& ";
+  if (stage === 0) {
+    result += "T_n=" + T_n.toString(0);
+    if (fractalTerm.level > 1) result += ",&U_n=" + U_n.toString(0);
+    if (fractalTerm.level > 0) result += ",&S_n=" + S_n.toString(0);
+  } else {
+    result += "n =" + BigNumber.from(sum).toString(0) + ",& ";
 
-  if (fractalTerm.level > 0) result += "q=" + q.toString(2) + ",& ";
-  if (fractalTerm.level > 1) result += "r=" + r.toString(2) + ",& ";
+    if (fractalTerm.level > 0) result += "q=" + q.toString(2) + ",& ";
+    if (fractalTerm.level > 1) result += "r=" + r.toString(2) + ",& ";
 
-  result += "\\dot{\\rho} =" + rhodot.toString(2);
-
+    result += "\\dot{\\rho} =" + rhodot.toString(2);
+  }
   result += "\\\\ {}\\end{matrix}";
   return result;
 };
+var canGoToPreviousStage = () => stage === 1;
+var goToPreviousStage = () => {
+  stage--;
+  theory.invalidatePrimaryEquation();
+  theory.invalidateSecondaryEquation();
+  theory.invalidateTertiaryEquation();
+};
+var canGoToNextStage = () => stage === 0;
+var goToNextStage = () => {
+  stage++;
+  theory.invalidatePrimaryEquation();
+  theory.invalidateSecondaryEquation();
+  theory.invalidateTertiaryEquation();
+};
+
 var getPublicationMultiplier = (tau) => tau.pow(1.1) * BigNumber.TWO;
 var getPublicationMultiplierFormula = (symbol) => "2" + symbol + "^{1.1}";
 var getTau = () => currency.value.pow(0.1);
