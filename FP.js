@@ -23,6 +23,8 @@ var T_n = BigNumber.ONE;
 var S_n = BigNumber.ONE;
 var U_n = BigNumber.ONE;
 
+var maxUDN = BigNumber.ONE;
+
 var updateN_flag = true;
 
 //precomputed U_n every 100 generations until 15000 generations
@@ -135,8 +137,8 @@ var init = () => {
   /////////////////////
   // Permanent Upgrades
   theory.createPublicationUpgrade(0, currency, 1e8);
-  theory.createBuyAllUpgrade(1, currency, 1);
-  theory.createAutoBuyerUpgrade(2, currency, 1);
+  theory.createBuyAllUpgrade(1, currency, 1e10);
+  theory.createAutoBuyerUpgrade(2, currency, 1e15);
 
   ///////////////////////
   //// Milestone Upgrades
@@ -206,13 +208,13 @@ var init = () => {
       if (terms.level === 0) {
         return Localization.getUpgradeAddTermDesc("n_2");
       } else if (terms.level == 1) return Localization.getUpgradeAddTermDesc("n_3");
-      return Localization.getUpgradeAddTermDesc("s");
+      return "$\\text{Adds term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 1.5}$";
     };
     terms.getInfo = (_) => {
       if (terms.level === 0) {
         return Localization.getUpgradeAddTermInfo("n_2");
       } else if (terms.level == 1) return Localization.getUpgradeAddTermInfo("n_3");
-      return Localization.getUpgradeAddTermInfo("s");
+      return "$\\text{Adds the term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 1.5}$";
     };
     terms.boughtOrRefunded = (_) => {
       theory.invalidatePrimaryEquation();
@@ -244,6 +246,7 @@ function T(n) {
   let i = n - 2 ** Math.floor(log2N);
   return T(2 ** Math.floor(log2N)) + 2 * T(i) + T(i + 1) - 1;
 }
+let un;
 function u(n) {
   if (n < 2) return n;
   return 4 * 3 ** (wt(n - 1) - 1);
@@ -270,6 +273,8 @@ function updateN() {
   T_n = BigNumber.from(T(sum));
   S_n = S(sum);
   U_n = BigNumber.from(U(sum));
+  maxUDN = maxUDN.max(U_n / T_n);
+  un = u(sum);
 }
 
 var updateAvailability = () => {
@@ -316,6 +321,9 @@ var postPublish = () => {
   q = BigNumber.ONE;
   r = BigNumber.ONE;
   prevSum = 1;
+  sum = 1;
+  U_n = BigNumber.ONE;
+  maxUDN = BigNumber.ONE;
   updateN_flag = true;
 };
 var getInternalState = () => `${q} ${r}`;
@@ -331,14 +339,14 @@ var setInternalState = (state) => {
 var getPrimaryEquation = () => {
   if (stage === 0) {
     theory.primaryEquationHeight = 240;
-    theory.primaryEquationScale = 1;
+    theory.primaryEquationScale = 0.78;
     let result = "T_{2^k+i}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
     if (fractalTerm.level > 1) {
-      result += "wt_n = n-\\sum_{k=1}^{\\infty}\\left\\lfloor\\frac{n}{2^k}\\right\\rfloor \\\\ ";
-      result += "u_0 = 0,\\;\\; u_1 = 1,\\;\\; u_n=4\\cdot 3^{wt_{n-1}-1} \\\\ ";
-      result += "U_n = \\sum_{i=0}^n u_i \\\\\\\\ ";
+      result += "\\qquad\\qquad   u_0 = 0,\\;\\; u_1 = 1,\\;\\; u_n=4(3^{w_{n-1}-1}) \\\\\\ ";
+      result += "\\qquad\\qquad\\qquad\\qquad w_n = n-\\sum_{k=1}^{\\infty}\\left\\lfloor\\frac{n}{2^k}\\right\\rfloor \\\\ ";
+      result += "\\qquad\\qquad\\qquad\\qquad\\qquad U_n = \\sum_{i=0}^n u_i \\\\\\\\ ";
     }
-    if (fractalTerm.level > 0) result += "S_n = 3^n";
+    if (fractalTerm.level > 0) result += "\\qquad\\qquad\\qquad\\qquad\\qquad\\quad S_n = 3^n";
     return result;
   } else {
     theory.primaryEquationHeight = fractalTerm.level === 0 ? 60 : 110;
