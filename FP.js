@@ -24,8 +24,6 @@ var T_n = BigNumber.ONE;
 var S_n = BigNumber.ONE;
 var U_n = BigNumber.ONE;
 
-var maxUDN = BigNumber.ONE;
-
 var updateN_flag = true;
 
 //precomputed U_n every 100 generations until 20000 generations
@@ -278,8 +276,6 @@ function updateN() {
   T_n = BigNumber.from(T(sum));
   S_n = S(sum);
   U_n = BigNumber.from(U(sum));
-  maxUDN = maxUDN.max(U_n / T_n);
-  un = u(sum);
 }
 
 var updateAvailability = () => {
