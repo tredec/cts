@@ -16,7 +16,7 @@ var rhodot = BigNumber.ZERO;
 var q = BigNumber.ONE;
 var r = BigNumber.ONE;
 var c1, c2, q1, q2, r1, r2, n1, n2, n3, s;
-var tnexp, unexp, terms, fractalTerm;
+var tnexp, unexp, terms, fractalTerm, abase;
 
 var sum = 1;
 var prevSum = 1;
@@ -147,7 +147,7 @@ var init = () => {
       case 0:
         return 18 * 0.1;
       case 1:
-        return 95 * 0.1;
+        return 100 * 0.1;
       case 2:
         return 250 * 0.1;
       case 3:
@@ -164,8 +164,10 @@ var init = () => {
         return 475 * 0.1;
       case 9:
         return 650 * 0.1;
-      default:
+      case 10:
         return 800 * 0.1;
+      default:
+        return 1200 * 0.1;
     }
   }
   {
@@ -204,6 +206,7 @@ var init = () => {
     unexp.description = Localization.getUpgradeIncCustomExpDesc("U_n", "0.25");
     unexp.info = Localization.getUpgradeIncCustomExpInfo("U_n", "0.25");
     unexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
+    unexp.canBeRefunded = () => abase.level === 0;
   }
   {
     terms = theory.createMilestoneUpgrade(3, 3);
@@ -226,18 +229,16 @@ var init = () => {
       updateAvailability();
       updateN_flag = true;
     };
-    terms.canBeRefunded = () => tnexp.level === 0 || terms.level === 3;
+    terms.canBeRefunded = () => (tnexp.level === 0 || terms.level === 3) && abase.level === 0;
   }
-
-  /////////////////
-  //// Achievements
-  //   achievement1 = theory.createAchievement(0, "Achievement 1", "Description 1", () => c1.level > 1);
-  //   achievement2 = theory.createSecretAchievement(1, "Achievement 2", "Description 2", "Maybe you should buy two levels of c2?", () => c2.level > 1);
-
-  //   ///////////////////
-  //   //// Story chapters
-  //   chapter1 = theory.createStoryChapter(0, "My First Chapter", "This is line 1,\nand this is line 2.\n\nNice.", () => c1.level > 0);
-  //   chapter2 = theory.createStoryChapter(1, "My Second Chapter", "This is line 1 again,\nand this is line 2... again.\n\nNice again.", () => c2.level > 0);
+  {
+    abase = theory.createMilestoneUpgrade(4, 1);
+    abase.description = Localization.getUpgradeIncCustomDesc("A base", "0.5");
+    abase.info = Localization.getUpgradeIncCustomInfo("A base", "0.5");
+    abase.boughtOrRefunded = (_) => {
+      theory.invalidateSecondaryEquation();
+    };
+  }
 
   updateAvailability();
 };
@@ -288,6 +289,7 @@ var updateAvailability = () => {
   s.isAvailable = terms.level > 2;
   tnexp.isAvailable = terms.level > 1;
   unexp.isAvailable = fractalTerm.level > 1 && tnexp.level === 4;
+  abase.isAvailable = unexp.level === 2 && terms.level === 3;
 };
 
 var tick = (elapsedTime, multiplier) => {
@@ -301,7 +303,7 @@ var tick = (elapsedTime, multiplier) => {
     updateN_flag = false;
     theory.invalidateTertiaryEquation();
   }
-  let A = BigNumber.TEN.pow(BigNumber.from(sum).log2().floor());
+  let A = BigNumber.from(10 + abase.level / 2).pow(BigNumber.from(sum).log2().floor());
 
   let qdot = (getQ1(q1.level) * getQ2(q2.level) * S_n.log().pow(2 + (terms.level > 2 ? getS(s.level) : 0)) * currency.value.pow(0.1) * A) / BigNumber.HUNDRED;
   q += fractalTerm.level > 0 ? qdot * dt : 0;
@@ -373,7 +375,7 @@ var getSecondaryEquation = () => {
   result += "n = 1+n_1";
   if (terms.level > 0) result += "+n_2";
   if (terms.level > 1) result += "+n_3";
-  result += ",& A = 10^{\\lfloor log_2(n) \\rfloor},&";
+  result += `,& A = ${abase.level === 0 ? 10 : 10.5}^{\\lfloor log_2(n) \\rfloor},&`;
   result += theory.latexSymbol + "=\\max\\rho^{0.1}";
   result += "\\\\ {}\\end{matrix}";
   return result;
