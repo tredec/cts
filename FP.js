@@ -6,16 +6,17 @@ import { Utils } from "./api/Utils";
 
 var id = "fractal_patterns";
 var name = "Fractal Patterns";
-var description = "A basic theory.";
-var authors = "Gilles-Philippe Paillé";
-var version = 1;
+var description =
+  "A theory that takes advantage of the growth of the 3 fractal patterns:\n Toothpick Sequence (Tₙ),\n Sierpiński triangle (Sₙ),\n Ulam-Warburton cellular automaton (Uₙ).\n\n Big thanks to Gen (Gen#3006) for all the help and suggestions with the LaTeX.";
+var authors = "XLII#0042";
+var version = 2;
 
 var currency = BigNumber.ZERO;
 var rhodot = BigNumber.ZERO;
 var q = BigNumber.ONE;
 var r = BigNumber.ONE;
 var c1, c2, q1, q2, r1, r2, n1, n2, n3, s;
-var c1Exp, tnexp, unexp, terms, fractalTerm;
+var tnexp, unexp, terms, fractalTerm;
 
 var sum = 1;
 var prevSum = 1;
@@ -27,7 +28,7 @@ var maxUDN = BigNumber.ONE;
 
 var updateN_flag = true;
 
-//precomputed U_n every 100 generations until 15000 generations
+//precomputed U_n every 100 generations until 20000 generations
 let un_precomputed = [
   0, 9749, 38997, 92821, 155989, 271765, 371285, 448661, 623957, 808853, 1087061, 1415829, 1485141, 1663893, 1794645, 2068245, 2495829, 2681877, 3235413, 3527445, 4348245, 5600149, 5663317, 5807893, 5940565,
   6200341, 6655573, 6841621, 7178581, 7607701, 8272981, 9793813, 9983317, 10246549, 10727509, 11309845, 12941653, 13288981, 14109781, 15594133, 17392981, 22369685, 22400597, 22488341, 22653269, 22839317, 23231573,
@@ -146,9 +147,9 @@ var init = () => {
   function getMilCustomCost(lvl) {
     switch (lvl) {
       case 0:
-        return 15 * 0.1;
+        return 18 * 0.1;
       case 1:
-        return 75 * 0.1;
+        return 95 * 0.1;
       case 2:
         return 250 * 0.1;
       case 3:
@@ -173,7 +174,11 @@ var init = () => {
     tnexp = theory.createMilestoneUpgrade(0, 4);
     tnexp.description = Localization.getUpgradeIncCustomExpDesc("T_n", "0.5");
     tnexp.info = Localization.getUpgradeIncCustomExpInfo("T_n", "0.5");
-    tnexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
+    tnexp.boughtOrRefunded = (_) => {
+      updateAvailability();
+      theory.invalidatePrimaryEquation();
+    };
+    tnexp.canBeRefunded = () => unexp.level === 0;
   }
   {
     fractalTerm = theory.createMilestoneUpgrade(1, 2);
@@ -284,18 +289,18 @@ var updateAvailability = () => {
   r2.isAvailable = fractalTerm.level > 1;
   n2.isAvailable = terms.level > 0;
   n3.isAvailable = terms.level > 1;
-  unexp.isAvailable = fractalTerm.level > 1;
   s.isAvailable = terms.level > 2;
   tnexp.isAvailable = terms.level > 1;
+  unexp.isAvailable = fractalTerm.level > 1 && tnexp.level === 4;
 };
 
 var tick = (elapsedTime, multiplier) => {
   let dt = BigNumber.from(elapsedTime * multiplier);
   let bonus = theory.publicationMultiplier;
 
-  if (updateN_flag) {
+  if (updateN_flag && sum < 20000) {
     prevSum = sum;
-    sum = 1 + getN1(n1.level) + (terms.level > 0 ? getN2(n2.level) : 0) + (terms.level > 1 ? getN3(n3.level) : 0);
+    sum = Math.min(20000, 1 + getN1(n1.level) + (terms.level > 0 ? getN2(n2.level) : 0) + (terms.level > 1 ? getN3(n3.level) : 0));
     updateN();
     updateN_flag = false;
     theory.invalidateTertiaryEquation();
@@ -338,7 +343,7 @@ var setInternalState = (state) => {
 
 var getPrimaryEquation = () => {
   if (stage === 0) {
-    theory.primaryEquationHeight = 240;
+    theory.primaryEquationHeight = fractalTerm.level < 2 ? 150 : 240;
     theory.primaryEquationScale = 0.78;
     let result = "T_{2^k+i}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
     if (fractalTerm.level > 1) {
@@ -354,7 +359,8 @@ var getPrimaryEquation = () => {
     let result = `\\dot{\\rho} = c_1c_2`;
     result += "A";
     if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "");
-    result += `T_n^{${tnexp.level > 0 || terms.level > 2 ? (1 + tnexp.level / 2 - (terms.level > 2 ? 1.5 : 0)).toString() : ""}${terms.level > 2 ? "+s" : ""}}`;
+    let lTnexp = tnexp.level > 0 || terms.level > 2 ? 1 + tnexp.level / 2 - (terms.level > 2 ? 1.5 : 0) : "";
+    result += `T_n^{${lTnexp !== 0 ? lTnexp.toString() : ""}${terms.level > 2 ? (lTnexp !== 0 ? "+s" : "s") : ""}}`;
     if (fractalTerm.level > 1) result += "U_n";
     if (fractalTerm.level > 0) result += `\\\\\\\\ \\dot{q} = q_1q_2A\\ln(S_n)^{2${terms.level > 2 ? "+s" : ""}}\\rho^{0.1}/100`;
     if (fractalTerm.level > 1) result += `\\\\\\\\ \\dot{r} = r_1r_2AU_n^{${1.25 + unexp.level * 0.25}}/(1000T_n)`;
@@ -366,11 +372,12 @@ var getSecondaryEquation = () => {
   if (stage === 0) return "";
 
   theory.secondaryEquationHeight = 60;
+  theory.secondaryEquationScale = 0.95;
   let result = "\\begin{matrix}";
   result += "n = 1+n_1";
   if (terms.level > 0) result += "+n_2";
   if (terms.level > 1) result += "+n_3";
-  result += "\\\\\\\\ A = 10^{\\lfloor log_2(n) \\rfloor}\\;\\;\\;\\;";
+  result += ",& A = 10^{\\lfloor log_2(n) \\rfloor},&";
   result += theory.latexSymbol + "=\\max\\rho^{0.1}";
   result += "\\\\ {}\\end{matrix}";
   return result;
@@ -382,12 +389,10 @@ var getTertiaryEquation = () => {
     if (fractalTerm.level > 1) result += ",&U_n=" + U_n.toString(0);
     if (fractalTerm.level > 0) result += ",&S_n=" + S_n.toString(0);
   } else {
-    result += "n =" + BigNumber.from(sum).toString(0) + ",& ";
+    result += "n =" + BigNumber.from(sum).toString(0);
 
-    if (fractalTerm.level > 0) result += "q=" + q.toString(2) + ",& ";
-    if (fractalTerm.level > 1) result += "r=" + r.toString(2) + ",& ";
-
-    result += "\\dot{\\rho} =" + rhodot.toString(2);
+    if (fractalTerm.level > 0) result += ",& q=" + q.toString(2) + ",& ";
+    if (fractalTerm.level > 1) result += "r=" + r.toString(2);
   }
   result += "\\\\ {}\\end{matrix}";
   return result;
