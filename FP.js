@@ -206,7 +206,8 @@ var init = () => {
     unexp.description = Localization.getUpgradeIncCustomExpDesc("U_n", "0.25");
     unexp.info = Localization.getUpgradeIncCustomExpInfo("U_n", "0.25");
     unexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
-    unexp.canBeRefunded = () => abase.level === 0;
+    unexp.canBeRefunded = (_) => abase.level === 0;
+    unexp.boughtOrRefunded = (_) => updateAvailability();
   }
   {
     terms = theory.createMilestoneUpgrade(3, 3);
@@ -229,12 +230,12 @@ var init = () => {
       updateAvailability();
       updateN_flag = true;
     };
-    terms.canBeRefunded = () => (tnexp.level === 0 || terms.level === 3) && abase.level === 0;
+    terms.canBeRefunded = (_) => (tnexp.level === 0 || terms.level === 3) && abase.level === 0;
   }
   {
     abase = theory.createMilestoneUpgrade(4, 1);
-    abase.description = Localization.getUpgradeIncCustomDesc("A base", "0.5");
-    abase.info = Localization.getUpgradeIncCustomInfo("A base", "0.5");
+    abase.description = Localization.getUpgradeIncCustomDesc("\\text{A base}", "0.5");
+    abase.info = Localization.getUpgradeIncCustomInfo("\\text{A base}", "0.5");
     abase.boughtOrRefunded = (_) => {
       theory.invalidateSecondaryEquation();
     };
