@@ -147,7 +147,7 @@ var init = () => {
       case 0:
         return 18 * 0.1;
       case 1:
-        return 100 * 0.1;
+        return 95 * 0.1;
       case 2:
         return 250 * 0.1;
       case 3:
