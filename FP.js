@@ -371,7 +371,7 @@ var setInternalState = (state) => {
 var getPrimaryEquation = () => {
   if (stage === 0) {
     theory.primaryEquationHeight = fractalTerm.level < 2 ? 150 : 240;
-    theory.primaryEquationScale = 0.7;
+    theory.primaryEquationScale = 0.6;
     let result = "T_{2^k+i}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
     if (fractalTerm.level > 0) {
       result += "\\qquad\\qquad   u_0 = 0,\\;\\; u_1 = 1,\\;\\; u_n=4(3^{w_{n-1}-1}) \\\\\\ ";
@@ -419,28 +419,20 @@ var getTertiaryEquation = () => {
   result += "\\\\ {}\\end{matrix}";
   return result;
 };
-function resetQuaternaryEntries() {
-  quaternaryEntries = [];
-  quaternaryEntries.push(new QuaternaryEntry("n", null));
-  quaternaryEntries.push(new QuaternaryEntry("t", null));
-  if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("q", null));
-  if (fractalTerm.level > 1) quaternaryEntries.push(new QuaternaryEntry("r", null));
-  if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("A", null));
-}
 var getQuaternaryEntries = () => {
   if (quaternaryEntries.length == 0) {
     quaternaryEntries.push(new QuaternaryEntry("n", null));
     quaternaryEntries.push(new QuaternaryEntry("t", null));
     if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("q", null));
+    if (fractalTerm.level > 1) quaternaryEntries.push(new QuaternaryEntry("r", null)); 
     if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("A", null));
-    if (fractalTerm.level > 1) quaternaryEntries.push(new QuaternaryEntry("r", null));
   }
 
   quaternaryEntries[0].value = BigNumber.from(sum).toString(0);
   quaternaryEntries[1].value = t_cumulative.toString(2);
   if (fractalTerm.level > 0) quaternaryEntries[2].value = q.toString(2);
-  if (fractalTerm.level > 1) quaternaryEntries[4].value = r.toString(2);
-  if (fractalTerm.level > 0) quaternaryEntries[3].value = A.toString(2);
+  if (fractalTerm.level > 1) quaternaryEntries[3].value = r.toString(2);
+  if (fractalTerm.level > 0) quaternaryEntries[fractalTerm.level > 1? 4 :3].value = A.toString(2);
 
   return quaternaryEntries;
 };
