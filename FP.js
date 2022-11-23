@@ -370,7 +370,7 @@ var setInternalState = (state) => {
 
 var getPrimaryEquation = () => {
   if (stage === 0) {
-    theory.primaryEquationHeight = fractalTerm.level < 2 ? 150 : 240;
+    theory.primaryEquationHeight = 150;
     theory.primaryEquationScale = 0.6;
     let result = "T_{2^k+i}\\left\\{ \\begin{array}{llll}\\frac{1}{3}(2^{2k+1}+1)  & \\text{if } i = 0,  \\\\ T_{2^k}+2T_i + T_{i+1}-1 & \\text{if } i = 1,..., 2^k - 1. \\end{array}\\right\\}\\\\\\\\ ";
     if (fractalTerm.level > 0) {
