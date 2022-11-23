@@ -186,7 +186,7 @@ var init = () => {
       updateAvailability();
       theory.invalidatePrimaryEquation();
     };
-    tnexp.canBeRefunded = () => unexp.level === 0;
+    tnexp.canBeRefunded = () => terms.level === 0;
   }
   {
     fractalTerm = theory.createMilestoneUpgrade(1, 2);
@@ -242,8 +242,9 @@ var init = () => {
       updateAvailability();
       updateN_flag = true;
     };
-    terms.canBeRefunded = (_) => tnexp.level === 0 && aexp.level === 0;
-  }
+    terms.canBeRefunded = (_) => unexp.level === 0 ;
+  
+}
   {
     sterm = theory.createMilestoneUpgrade(4, 1);
     sterm.getDescription = () => "$\\text{Adds term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 2.5}$";
@@ -306,8 +307,8 @@ var updateAvailability = () => {
   n2.isAvailable = terms.level > 0;
   n3.isAvailable = terms.level > 1;
   s.isAvailable = sterm.level > 0;
-  tnexp.isAvailable = terms.level > 1;
-  unexp.isAvailable = fractalTerm.level > 1 && tnexp.level === 4;
+  terms.isAvailable = tnexp.level ===4;
+  unexp.isAvailable = fractalTerm.level > 1 && terms.level === 2;
   aexp.isAvailable = unexp.level === 2;
   sterm.isAvailable = unexp.level === 2;
 };
