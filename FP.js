@@ -14,6 +14,8 @@ var version = 2.1;
 var currency = BigNumber.ZERO;
 var quaternaryEntries;
 var rhodot = BigNumber.ZERO;
+let qdot = BigNumber.ZERO;
+let rdot = BigNumber.ZERO;
 var q = BigNumber.ONE;
 var r = BigNumber.ONE;
 var t_cumulative = BigNumber.ZERO;
@@ -31,21 +33,20 @@ var updateN_flag = true;
 
 //precomputed U_n every 100 generations until 20000 generations
 let un_precomputed = [
-  0, 9749, 38997, 92821, 155989, 271765, 371285, 448661, 623957, 808853, 1087061, 1415829, 1485141, 1663893, 1794645, 2068245, 2495829, 2681877, 3235413, 3527445, 4348245, 5600149, 5663317, 5807893, 5940565,
-  6200341, 6655573, 6841621, 7178581, 7607701, 8272981, 9793813, 9983317, 10246549, 10727509, 11309845, 12941653, 13288981, 14109781, 15594133, 17392981, 22369685, 22400597, 22488341, 22653269, 22839317, 23231573,
-  23488661, 23762261, 24243221, 24801365, 25677461, 26622293, 26830229, 27366485, 27800213, 28714325, 29858837, 30430805, 32081045, 33091925, 35461013, 39175253, 39364757, 39933269, 40196501, 40986197, 42341525,
-  42910037, 43952021, 45239381, 47328533, 51766613, 52321301, 53155925, 54567701, 56439125, 61199765, 62376533, 64838933, 69571925, 74595221, 89478741, 89511189, 89602389, 89763861, 89953365, 90387093, 90613077,
-  90872853, 91357269, 91915413, 92926293, 93732885, 93954645, 94480533, 95049045, 95838741, 96972885, 97555221, 99205461, 100247445, 102709845, 106289301, 106489173, 107042709, 107320917, 108110613, 109465941,
-  110024085, 111200853, 112394901, 114857301, 118877205, 119435349, 120311445, 121723221, 123594645, 128324181, 129625365, 132367701, 136696341, 141844053, 156588693, 156701013, 156964245, 157459029, 158027541,
-  159733077, 159996309, 160786005, 162239253, 163944789, 167070741, 169366101, 170062485, 171640149, 173304213, 175808085, 179086101, 180957525, 185783829, 189314133, 196701333, 207066453, 207624597, 209285205,
-  210161301, 212623701, 216565269, 218270805, 222174357, 225756501, 232770453, 244799061, 246473493, 249506133, 253368213, 259355733, 273171093, 278287701, 285394965, 298380885, 314103957, 357914965, 357953557,
-  358044757, 358209685, 358409557, 358962709, 359055445, 359318677, 359813461, 360371605, 361548373, 362178709, 362452309, 362933269, 363491413, 364367509, 365429077, 366052885, 367661653, 368962837, 371705173,
-  374740885, 374931541, 375481621, 375818581, 376608277, 377922133, 378490645, 380196181, 380985877, 383354965, 387323029, 387891541, 388933525, 390220885, 392310037, 396821845
+  0, 9749, 38997, 92821, 155989, 271765, 371285, 448661, 623957, 808853, 1087061, 1415829, 1485141, 1663893, 1794645, 2068245, 2495829, 2681877, 3235413, 3527445, 4348245, 5600149, 5663317, 5807893, 5940565, 6200341, 6655573, 6841621, 7178581,
+  7607701, 8272981, 9793813, 9983317, 10246549, 10727509, 11309845, 12941653, 13288981, 14109781, 15594133, 17392981, 22369685, 22400597, 22488341, 22653269, 22839317, 23231573, 23488661, 23762261, 24243221, 24801365, 25677461, 26622293, 26830229,
+  27366485, 27800213, 28714325, 29858837, 30430805, 32081045, 33091925, 35461013, 39175253, 39364757, 39933269, 40196501, 40986197, 42341525, 42910037, 43952021, 45239381, 47328533, 51766613, 52321301, 53155925, 54567701, 56439125, 61199765,
+  62376533, 64838933, 69571925, 74595221, 89478741, 89511189, 89602389, 89763861, 89953365, 90387093, 90613077, 90872853, 91357269, 91915413, 92926293, 93732885, 93954645, 94480533, 95049045, 95838741, 96972885, 97555221, 99205461, 100247445,
+  102709845, 106289301, 106489173, 107042709, 107320917, 108110613, 109465941, 110024085, 111200853, 112394901, 114857301, 118877205, 119435349, 120311445, 121723221, 123594645, 128324181, 129625365, 132367701, 136696341, 141844053, 156588693,
+  156701013, 156964245, 157459029, 158027541, 159733077, 159996309, 160786005, 162239253, 163944789, 167070741, 169366101, 170062485, 171640149, 173304213, 175808085, 179086101, 180957525, 185783829, 189314133, 196701333, 207066453, 207624597,
+  209285205, 210161301, 212623701, 216565269, 218270805, 222174357, 225756501, 232770453, 244799061, 246473493, 249506133, 253368213, 259355733, 273171093, 278287701, 285394965, 298380885, 314103957, 357914965, 357953557, 358044757, 358209685,
+  358409557, 358962709, 359055445, 359318677, 359813461, 360371605, 361548373, 362178709, 362452309, 362933269, 363491413, 364367509, 365429077, 366052885, 367661653, 368962837, 371705173, 374740885, 374931541, 375481621, 375818581, 376608277,
+  377922133, 378490645, 380196181, 380985877, 383354965, 387323029, 387891541, 388933525, 390220885, 392310037, 396821845,
 ];
 //precomputed values of 2-U_n/T_n, which appear if n is a power of two
 let approx = [
-  1, 0.33333333333333326, 0.09090909090909083, 0.023255813953488413, 0.005847953216374213, 0.0014641288433381305, 0.00036616623947272053, 0.00009154994049254128, 0.000022888008972099527, 0.000005722034984501079,
-  0.0000014305107924883487, 3.576278260197796e-7, 8.940696449855068e-8, 2.235174156872688e-8, 5.587935447692871e-9
+  1, 0.33333333333333326, 0.09090909090909083, 0.023255813953488413, 0.005847953216374213, 0.0014641288433381305, 0.00036616623947272053, 0.00009154994049254128, 0.000022888008972099527, 0.000005722034984501079, 0.0000014305107924883487,
+  3.576278260197796e-7, 8.940696449855068e-8, 2.235174156872688e-8, 5.587935447692871e-9,
 ];
 
 var stage = 1;
@@ -155,7 +156,7 @@ var init = () => {
       case 0:
         return 22 * 0.1;
       case 1:
-        return 115 * 0.1;
+        return 110 * 0.1;
       case 2:
         return 200 * 0.1;
       case 3:
@@ -242,14 +243,14 @@ var init = () => {
       updateAvailability();
       updateN_flag = true;
     };
-    terms.canBeRefunded = (_) => unexp.level === 0 ;
-  
-}
+    terms.canBeRefunded = (_) => unexp.level === 0;
+  }
   {
     sterm = theory.createMilestoneUpgrade(4, 1);
     sterm.getDescription = () => "$\\text{Adds term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 2.5}$";
     sterm.getInfo = () => "$\\text{Adds the term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 2.5}$";
     sterm.boughtOrRefunded = (_) => {
+      updateAvailability()
       theory.invalidatePrimaryEquation();
     };
   }
@@ -307,7 +308,7 @@ var updateAvailability = () => {
   n2.isAvailable = terms.level > 0;
   n3.isAvailable = terms.level > 1;
   s.isAvailable = sterm.level > 0;
-  terms.isAvailable = tnexp.level ===4;
+  terms.isAvailable = tnexp.level === 4;
   unexp.isAvailable = fractalTerm.level > 1 && terms.level === 2;
   aexp.isAvailable = unexp.level === 2;
   sterm.isAvailable = unexp.level === 2;
@@ -329,10 +330,10 @@ var tick = (elapsedTime, multiplier) => {
 
   A = fractalTerm.level > 0 ? BigNumber.from(approx[Math.floor(Math.log2(sum))] ** (-2 - aexp.level / 10)) : 1;
 
-  let qdot = (getQ1(q1.level) * getQ2(q2.level) * A * T_n * U_n.pow(getUnexp(unexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() : 0))) / BigNumber.THOUSAND;
+  qdot = (getQ1(q1.level) * getQ2(q2.level) * A * T_n * U_n.pow(getUnexp(unexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() : 0))) / BigNumber.THOUSAND;
   q += fractalTerm.level > 0 ? qdot * dt : 0;
 
-  let rdot = getR1(r1.level) * A * (T_n * U_n).pow(BigNumber.from(Math.log10(sum))) * S_n;
+  rdot = getR1(r1.level) * A * (T_n * U_n).pow(BigNumber.from(Math.log10(sum))) * S_n;
   r += fractalTerm.level > 1 ? rdot * dt : 0;
 
   rhodot = bonus * getC1(c1.level) * getC2(c2.level) * A * T_n.pow(getTnexp(tnexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() - 2.5 : 0)) * t_cumulative;
@@ -354,6 +355,7 @@ var postPublish = () => {
   U_n = BigNumber.ONE;
   maxUDN = BigNumber.ONE;
   updateN_flag = true;
+  A = BigNumber.ONE
   theory.invalidateTertiaryEquation();
   theory.invalidateQuaternaryValues();
 };
@@ -420,19 +422,32 @@ var getTertiaryEquation = () => {
   return result;
 };
 var getQuaternaryEntries = () => {
+  // log(JSON.stringify(quaternaryEntries))
   if (quaternaryEntries.length == 0) {
     quaternaryEntries.push(new QuaternaryEntry("n", null));
-    quaternaryEntries.push(new QuaternaryEntry("t", null));
-    if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("q", null));
-    if (fractalTerm.level > 1) quaternaryEntries.push(new QuaternaryEntry("r", null)); 
-    if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("A", null));
+    if (stage === 0) {
+      if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("\\dot{q}", null));
+      if (fractalTerm.level > 1) quaternaryEntries.push(new QuaternaryEntry("\\dot{r}", null));
+      quaternaryEntries.push(new QuaternaryEntry("\\dot{\\rho}", null));
+    } else {
+      quaternaryEntries.push(new QuaternaryEntry("t", null));
+      if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("q", null));
+      if (fractalTerm.level > 1) quaternaryEntries.push(new QuaternaryEntry("r", null));
+      if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("A", null));
+    }
   }
 
   quaternaryEntries[0].value = BigNumber.from(sum).toString(0);
-  quaternaryEntries[1].value = t_cumulative.toString(2);
-  if (fractalTerm.level > 0) quaternaryEntries[2].value = q.toString(2);
-  if (fractalTerm.level > 1) quaternaryEntries[3].value = r.toString(2);
-  if (fractalTerm.level > 0) quaternaryEntries[fractalTerm.level > 1? 4 :3].value = A.toString(2);
+  if (stage === 0) {
+    if (fractalTerm.level > 0) quaternaryEntries[1].value = qdot.toString(2);
+    if (fractalTerm.level > 1) quaternaryEntries[2].value = rdot.toString(2);
+    quaternaryEntries[fractalTerm.level +1].value = rhodot.toString(2);
+  } else {
+    quaternaryEntries[1].value = t_cumulative.toString(2);
+    if (fractalTerm.level > 0) quaternaryEntries[2].value = q.toString(2);
+    if (fractalTerm.level > 1) quaternaryEntries[3].value = r.toString(2);
+    if (fractalTerm.level > 0) quaternaryEntries[fractalTerm.level > 1 ? 4 : 3].value = A.toString(2);
+  }
 
   return quaternaryEntries;
 };
@@ -442,6 +457,7 @@ var goToPreviousStage = () => {
   theory.invalidatePrimaryEquation();
   theory.invalidateSecondaryEquation();
   theory.invalidateTertiaryEquation();
+  quaternaryEntries = [];
   theory.invalidateQuaternaryValues();
 };
 var canGoToNextStage = () => stage === 0;
@@ -450,6 +466,7 @@ var goToNextStage = () => {
   theory.invalidatePrimaryEquation();
   theory.invalidateSecondaryEquation();
   theory.invalidateTertiaryEquation();
+  quaternaryEntries = [];
   theory.invalidateQuaternaryValues();
 };
 
