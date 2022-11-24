@@ -23,8 +23,8 @@ var A = BigNumber.ONE;
 var tvar, c1, c2, q1, q2, r1, n1, n2, n3, s;
 var tnexp, unexp, terms, fractalTerm, sterm, aexp;
 
-var sum = 1;
-var prevSum = 1;
+var n = 1;
+var prevN = 1;
 var T_n = BigNumber.ONE;
 var S_n = BigNumber.ONE;
 var U_n = BigNumber.ONE;
@@ -43,7 +43,7 @@ let un_precomputed = [
   358409557, 358962709, 359055445, 359318677, 359813461, 360371605, 361548373, 362178709, 362452309, 362933269, 363491413, 364367509, 365429077, 366052885, 367661653, 368962837, 371705173, 374740885, 374931541, 375481621, 375818581, 376608277,
   377922133, 378490645, 380196181, 380985877, 383354965, 387323029, 387891541, 388933525, 390220885, 392310037, 396821845,
 ];
-//precomputed values of 2-U_n/T_n, which appear if n is a power of two
+//precomputed values of 2-U_n/T_n until 20000 n, which appear if n is a power of two
 let approx = [
   1, 0.33333333333333326, 0.09090909090909083, 0.023255813953488413, 0.005847953216374213, 0.0014641288433381305, 0.00036616623947272053, 0.00009154994049254128, 0.000022888008972099527, 0.000005722034984501079, 0.0000014305107924883487,
   3.576278260197796e-7, 8.940696449855068e-8, 2.235174156872688e-8, 5.587935447692871e-9,
@@ -287,8 +287,8 @@ function wt(n) {
 }
 function U(n) {
   let p = n - (n % 100);
-  let temp = prevSum > p ? U_n.toNumber() : un_precomputed[Math.floor(n / 100)];
-  for (let i = prevSum > p ? prevSum + 1 : p + 1; i <= n; i++) temp += u(i);
+  let temp = prevN > p ? U_n.toNumber() : un_precomputed[Math.floor(n / 100)];
+  for (let i = prevN > p ? prevN + 1 : p + 1; i <= n; i++) temp += u(i);
   return temp;
 }
 function S(n) {
@@ -296,9 +296,9 @@ function S(n) {
 }
 
 function updateN() {
-  T_n = BigNumber.from(T(sum));
-  S_n = S(Math.floor(Math.sqrt(sum)));
-  U_n = BigNumber.from(U(sum));
+  T_n = BigNumber.from(T(n));
+  S_n = S(Math.floor(Math.sqrt(n)));
+  U_n = BigNumber.from(U(n));
 }
 
 var updateAvailability = () => {
@@ -319,21 +319,22 @@ var tick = (elapsedTime, multiplier) => {
   let bonus = theory.publicationMultiplier;
 
   if (c1.level === 0) return;
-  if (updateN_flag && sum < 20000) {
-    prevSum = sum;
-    sum = Math.min(20000, 1 + getN1(n1.level) + (terms.level > 0 ? getN2(n2.level) : 0) + (terms.level > 1 ? getN3(n3.level) : 0));
+  if (updateN_flag && n < 20000) {
+    prevN = n;
+    //n is clamped at 20000 because of computation reasons. takes ~40k days to reach 
+    n = Math.min(20000, 1 + getN1(n1.level) + (terms.level > 0 ? getN2(n2.level) : 0) + (terms.level > 1 ? getN3(n3.level) : 0));
     updateN();
     updateN_flag = false;
     theory.invalidateTertiaryEquation();
   }
   t_cumulative += getTdot(tvar.level) * dt;
 
-  A = fractalTerm.level > 0 ? BigNumber.from(approx[Math.floor(Math.log2(sum))] ** (-2 - aexp.level / 10)) : 1;
+  A = fractalTerm.level > 0 ? BigNumber.from(approx[Math.min(approx.length-1,Math.floor(Math.log2(n)))] ** (-2 - aexp.level / 10)) : 1;
 
   qdot = (getQ1(q1.level) * getQ2(q2.level) * A * T_n * U_n.pow(getUnexp(unexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() : 0))) / BigNumber.THOUSAND;
   q += fractalTerm.level > 0 ? qdot * dt : 0;
 
-  rdot = getR1(r1.level) * A * (T_n * U_n).pow(BigNumber.from(Math.log10(sum))) * S_n;
+  rdot = getR1(r1.level) * A * (T_n * U_n).pow(BigNumber.from(Math.log10(n))) * S_n;
   r += fractalTerm.level > 1 ? rdot * dt : 0;
 
   rhodot = bonus * getC1(c1.level) * getC2(c2.level) * A * T_n.pow(getTnexp(tnexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() - 2.5 : 0)) * t_cumulative;
@@ -350,8 +351,8 @@ var postPublish = () => {
   q = BigNumber.ONE;
   r = BigNumber.ONE;
   t_cumulative = BigNumber.ZERO;
-  prevSum = 1;
-  sum = 1;
+  prevN = 1;
+  n = 1;
   U_n = BigNumber.ONE;
   maxUDN = BigNumber.ONE;
   updateN_flag = true;
@@ -437,14 +438,14 @@ var getQuaternaryEntries = () => {
     }
   }
 
-  quaternaryEntries[0].value = BigNumber.from(sum).toString(0);
+  quaternaryEntries[0].value = BigNumber.from(n).toString(0);
   if (stage === 0) {
     if (fractalTerm.level > 0) quaternaryEntries[1].value = qdot.toString(2);
     if (fractalTerm.level > 1) quaternaryEntries[2].value = rdot.toString(2);
     quaternaryEntries[fractalTerm.level +1].value = rhodot.toString(2);
   } else {
     quaternaryEntries[1].value = t_cumulative.toString(2);
-    if (fractalTerm.level > 0) quaternaryEntries[2].value = q.toString(2);
+    if (fractalTerm.level > 0) quaternaryEntries[2].value = q.toString(2) ;
     if (fractalTerm.level > 1) quaternaryEntries[3].value = r.toString(2);
     if (fractalTerm.level > 0) quaternaryEntries[fractalTerm.level > 1 ? 4 : 3].value = A.toString(2);
   }
