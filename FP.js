@@ -30,6 +30,7 @@ var S_n = BigNumber.ONE;
 var U_n = BigNumber.ONE;
 
 var updateN_flag = true;
+var adBoost = BigNumber.ONE;
 
 //precomputed U_n every 100 generations until 20000 generations
 let un_precomputed = [
@@ -317,6 +318,7 @@ var updateAvailability = () => {
 var tick = (elapsedTime, multiplier) => {
   let dt = BigNumber.from(elapsedTime * multiplier);
   let bonus = theory.publicationMultiplier;
+  adBoost = BigNumber.from(multiplier);
 
   if (c1.level === 0) return;
   if (updateN_flag && n < 20000) {
@@ -440,9 +442,9 @@ var getQuaternaryEntries = () => {
 
   quaternaryEntries[0].value = BigNumber.from(n).toString(0);
   if (stage === 0) {
-    if (fractalTerm.level > 0) quaternaryEntries[1].value = qdot.toString(2);
-    if (fractalTerm.level > 1) quaternaryEntries[2].value = rdot.toString(2);
-    quaternaryEntries[fractalTerm.level +1].value = rhodot.toString(2);
+    if (fractalTerm.level > 0) quaternaryEntries[1].value = (adBoost * qdot) .toString(2);
+    if (fractalTerm.level > 1) quaternaryEntries[2].value = (adBoost * rdot) .toString(2);
+    quaternaryEntries[fractalTerm.level +1].value = (adBoost * rhodot).toString(2);
   } else {
     quaternaryEntries[1].value = t_cumulative.toString(2);
     if (fractalTerm.level > 0) quaternaryEntries[2].value = q.toString(2) ;
