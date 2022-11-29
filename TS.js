@@ -5,7 +5,7 @@ import { theory } from "./api/Theory";
 import { Utils } from "./api/Utils";
 
 var id = "toothpick_sequence";
-var name = "Toothpick Sequence";
+var name = "Toothpick Sequence (Old version)";
 var description = "A theory that takes advantage of the growth of the Toothpick Sequence.";
 var authors = "XLII#0042";
 var version = 1;
