@@ -407,7 +407,7 @@ var getSecondaryEquation = () => {
   let result = "\\begin{matrix}";
   result += "n = 1+n_1";
   if (terms.level > 0){ result += "+n_2";theory.secondaryEquationScale = 0.9;} 
-  if (terms.level > 1) { result += "+n_3";theory.secondaryEquationScale = 0.825;}  
+  if (terms.level > 1) { result += "+n_3";theory.secondaryEquationScale = 0.8;}  
   if (fractalTerm.level > 0) result += `,& A = min(2-U_n/T_n)  ^{-${aexp.level > 0 ? 2.1 : 2}}`;
   result += "\\\\ {}\\end{matrix}";
   return result;
