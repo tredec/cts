@@ -92,9 +92,9 @@ var init = () => {
   }
   // q2
   {
-    let getDesc = (level) => "q_2=2^{" + level + "}";
+    let getDesc = (level) => "q_2=5^{" + level + "}";
     let getInfo = (level) => "q_2=" + getQ2(level).toString(0);
-    q2 = theory.createUpgrade(4, currency, new ExponentialCost(1e65, Math.log2(1e2)));
+    q2 = theory.createUpgrade(4, currency, new ExponentialCost(1e65, Math.log2(4.52e4)));
     q2.getDescription = (_) => Utils.getMath(getDesc(q2.level));
     q2.getInfo = (amount) => Utils.getMathTo(getInfo(q2.level), getInfo(q2.level + amount));
   }
@@ -137,7 +137,7 @@ var init = () => {
   {
     let getDesc = (level) => "s=" + getS(level).toString(2);
     let getInfo = (level) => "s=" + getS(level).toString(2);
-    s = theory.createUpgrade(9, currency, new ExponentialCost(BigNumber.from("1e625"), Math.log2(1.7e1)));
+    s = theory.createUpgrade(9, currency, new ExponentialCost(BigNumber.from("1e650"), Math.log2(1.5e1)));
     s.getDescription = (_) => Utils.getMath(getDesc(s.level));
     s.getInfo = (amount) => Utils.getMathTo(getInfo(s.level), getInfo(s.level + amount));
     s.bought = (_) => (updateN_flag = true);
@@ -485,7 +485,7 @@ var getTdot = (level) => BigNumber.from(0.2 + level / 5);
 var getC1 = (level) => Utils.getStepwisePowerSum(level, 2, 20, 0);
 var getC2 = (level) => BigNumber.TWO.pow(level);
 var getQ1 = (level) => Utils.getStepwisePowerSum(level, 10, 10, 0);
-var getQ2 = (level) => BigNumber.TWO.pow(level);
+var getQ2 = (level) => BigNumber.FIVE.pow(level);
 var getR1 = (level) => Utils.getStepwisePowerSum(level, 2, 4, 0);
 var getN1 = (level) => BigNumber.from(getStepP1Sum(level, 40));
 var getN2 = (level) => BigNumber.from(getStepP1Sum(level, 35));
