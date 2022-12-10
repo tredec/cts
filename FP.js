@@ -137,7 +137,7 @@ var init = () => {
   {
     let getDesc = (level) => "s=" + getS(level).toString(2);
     let getInfo = (level) => "s=" + getS(level).toString(2);
-    s = theory.createUpgrade(9, currency, new ExponentialCost(BigNumber.from("1e650"), Math.log2(1.5e1)));
+    s = theory.createUpgrade(9, currency, new ExponentialCost(BigNumber.from("1e675"), Math.log2(5e28)));
     s.getDescription = (_) => Utils.getMath(getDesc(s.level));
     s.getInfo = (amount) => Utils.getMathTo(getInfo(s.level), getInfo(s.level + amount));
     s.bought = (_) => (updateN_flag = true);
@@ -490,7 +490,7 @@ var getR1 = (level) => Utils.getStepwisePowerSum(level, 2, 4, 0);
 var getN1 = (level) => BigNumber.from(getStepP1Sum(level, 40));
 var getN2 = (level) => BigNumber.from(getStepP1Sum(level, 35));
 var getN3 = (level) => BigNumber.from(getStepP1Sum(level, 30));
-var getS = (level) => BigNumber.from(1 + level * 0.01);
+var getS = (level) => BigNumber.from(1 + level * 0.25);
 var getUnexp = (level) => BigNumber.from(5 + level / 2);
 var getTnexp = (level) => BigNumber.from(3 + level);
 
