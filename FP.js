@@ -162,13 +162,13 @@ var init = () => {
       case 2:
         return 200 * 0.075;
       case 3:
-        return 250 * 0.075;
+        return 225 * 0.075;
       case 4:
-        return 275 * 0.075;
+        return 250 * 0.075;
       case 5:
-        return 325 * 0.075;
+        return 275 * 0.075;
       case 6:
-        return 375 * 0.075;
+        return 300 * 0.075;
       case 7:
         return 400 * 0.075;
       case 8:
