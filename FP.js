@@ -177,7 +177,7 @@ var init = () => {
         return 550 * 0.075;
       case 10:
         return 575 * 0.075;
-      case 10:
+      case 11:
         return 740 * 0.075;
       default:
         return 1475 * 0.075;
