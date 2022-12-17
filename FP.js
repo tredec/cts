@@ -160,15 +160,15 @@ var init = () => {
       case 1:
         return 105 * 0.075;
       case 2:
-        return 200 * 0.075;
+        return 175 * 0.075;
       case 3:
-        return 225 * 0.075;
+        return 200 * 0.075;
       case 4:
-        return 250 * 0.075;
+        return 230 * 0.075;
       case 5:
-        return 275 * 0.075;
+        return 260 * 0.075;
       case 6:
-        return 300 * 0.075;
+        return 280 * 0.075;
       case 7:
         return 400 * 0.075;
       case 8:
