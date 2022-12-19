@@ -178,7 +178,7 @@ var init = () => {
       case 11:
         return 740 * 0.075;
       default:
-        return 1475 * 0.075;
+        return 1485 * 0.075;
     }
   }
   {
@@ -259,8 +259,8 @@ var init = () => {
   }
   {
     qexp = theory.createMilestoneUpgrade(5, 1);
-    qexp.getDescription = () => "$(T_nU_n)^{\\log(n)} \\rightarrow  (T_nU_n)^{\\sqrt[7.5]{T_n}}$";
-    qexp.getInfo = () => "$(T_nU_n)^{\\log(n)} \\rightarrow  (T_nU_n)^{\\sqrt[7.5]{T_n}}$";
+    qexp.getDescription = () => "$r_1A(T_nU_n)^{\\log(n)} \\rightarrow  \\sqrt{r1}(T_nU_n)^{\\sqrt[7.5]{T_n}}$";
+    qexp.getInfo = () => "$r_1A(T_nU_n)^{\\log(n)} \\rightarrow  \\sqrt{r1}(T_nU_n)^{\\sqrt[7.5]{T_n}}$";
     qexp.boughtOrRefunded = (_) => {
       theory.invalidatePrimaryEquation();
     };
@@ -313,7 +313,7 @@ var updateAvailability = () => {
   s.isAvailable = sterm.level > 0;
   terms.isAvailable = tnexp.level === 4;
   unexp.isAvailable = fractalTerm.level > 1 && terms.level === 2;
-  sterm.isAvailable = unexp.level === 3;
+  sterm.isAvailable = unexp.level === 2;
   qexp.isAvailable = sterm.level === 1;
 };
 
@@ -428,15 +428,15 @@ var getSecondaryEquation = () => {
   return result;
 };
 var getTertiaryEquation = () => {
-  let result = "\\begin{matrix}";
+  let result = "";
   if (stage === 0) {
-    result += "T_n=" + T_n.toString(0);
-    if (fractalTerm.level > 0) result += ",&U_n=" + U_n.toString(0);
-    if (fractalTerm.level > 1) result += ",&S_{\\lfloor \\sqrt{n} \\rfloor}=" + S_n.toString(0);
+    result += "\\begin{matrix}T_n=" + T_n.toString(0);
+    if (fractalTerm.level > 0) result += ",&U_n=" + U_n.toString(0) + "\\end{matrix}";
+    if (fractalTerm.level > 1) result += "\\\\\\ \\begin{matrix}\\qquad\\qquad S_{\\lfloor \\sqrt{n} \\rfloor}=" + S_n.toString(0);
+    result += "\\\\ {}\\end{matrix}";
   } else {
     result += theory.latexSymbol + "=\\max\\rho^{0.075}";
   }
-  result += "\\\\ {}\\end{matrix}";
   return result;
 };
 var getQuaternaryEntries = () => {
@@ -507,9 +507,9 @@ var getN2 = (level) => BigNumber.from(getStepP1Sum(level, 35));
 var getN3 = (level) => BigNumber.from(getStepP1Sum(level, 30));
 var getS = (level) => {
   if (level < 21) return BigNumber.from(1 + level * 0.25);
-  if (level < 36) return BigNumber.from(getS(21).toNumber() + (level - 21) * 0.2);
-  if (level < 43) return BigNumber.from(getS(36).toNumber() + (level - 36) * 0.3);
-  return BigNumber.from(getS(43).toNumber() + (level - 43) * 0.1);
+  if (level < 36) return BigNumber.from(getS(20).toNumber() + 0.25 + (level - 21) * 0.2);
+  if (level < 43) return BigNumber.from(getS(35).toNumber() + 0.2 + (level - 36) * 0.3);
+  return BigNumber.from(getS(42).toNumber() + 0.3 + (level - 43) * 0.1);
 };
 var getUnexp = (level) => BigNumber.from(5 + level / 2);
 var getTnexp = (level) => BigNumber.from(3 + level);
