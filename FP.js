@@ -249,8 +249,8 @@ var init = () => {
   }
   {
     sterm = theory.createMilestoneUpgrade(4, 1);
-    sterm.getDescription = () => "$\\text{Adds term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 2.5}$";
-    sterm.getInfo = () => "$\\text{Adds the term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 2.5}$";
+    sterm.getDescription = () => "$\\text{Adds term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 3}$";
+    sterm.getInfo = () => "$\\text{Adds the term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 3}$";
     sterm.boughtOrRefunded = (_) => {
       updateAvailability();
       theory.invalidatePrimaryEquation();
@@ -342,7 +342,7 @@ var tick = (elapsedTime, multiplier) => {
   else rdot = getR1(r1.level).sqrt() * (T_n * U_n).pow(BigNumber.from(T_n ** (1 / 7.5))) * S_n;
   r += fractalTerm.level > 1 ? rdot * dt : 0;
 
-  rhodot = bonus * getC1(c1.level) * getC2(c2.level) * A * T_n.pow(getTnexp(tnexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() - 2.5 : 0)) * t_cumulative;
+  rhodot = bonus * getC1(c1.level) * getC2(c2.level) * A * T_n.pow(getTnexp(tnexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() - 3 : 0)) * t_cumulative;
   rhodot *= fractalTerm.level > 0 ? q : 1;
   rhodot *= fractalTerm.level > 1 ? r : 1;
 
@@ -398,8 +398,8 @@ var getPrimaryEquation = () => {
     if (fractalTerm.level > 0) result += "A";
     if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "");
     result += "t";
-    let TnexpIsInt = (getTnexp(tnexp.level) - (sterm.level > 0 ? 2.5 : 0)).toNumber() % 1 < 0.0001;
-    result += `T_n^{${(getTnexp(tnexp.level) - (sterm.level > 0 ? 2.5 : 0)).toString(TnexpIsInt ? 0 : 1) + (sterm.level > 0 ? "+s" : "")}}`;
+    let TnexpIsInt = (getTnexp(tnexp.level) - (sterm.level > 0 ? 3 : 0)).toNumber() % 1 < 0.0001;
+    result += `T_n^{${(getTnexp(tnexp.level) - (sterm.level > 0 ? 3 : 0)).toString(TnexpIsInt ? 0 : 1) + (sterm.level > 0 ? "+s" : "")}}`;
     if (fractalTerm.level > 0) result += `\\\\\\\\ \\dot{q} = q_1q_2AT_nU_n^{${getUnexp(unexp.level).toString(0) + (sterm.level > 0 ? "+s" : "")}}/1000`;
     if (fractalTerm.level > 1) {
       if (qexp.level === 0) result += `\\\\\\\\ \\dot{r} = r_1A(T_nU_n)^{\\log(n)}S_{\\lfloor \\sqrt{n} \\rfloor}`;
