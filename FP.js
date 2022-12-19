@@ -214,18 +214,7 @@ var init = () => {
     fractalTerm.canBeRefunded = () => unexp.level === 0;
   }
   {
-    unexp = theory.createMilestoneUpgrade(2, 2);
-    unexp.description = Localization.getUpgradeIncCustomExpDesc("U_n", "0.5");
-    unexp.info = Localization.getUpgradeIncCustomExpInfo("U_n", "0.5");
-    unexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
-    unexp.canBeRefunded = (_) => qexp.level === 0 && sterm.level === 0;
-    unexp.boughtOrRefunded = (_) => {
-      theory.invalidatePrimaryEquation();
-      updateAvailability();
-    };
-  }
-  {
-    terms = theory.createMilestoneUpgrade(3, 2);
+    terms = theory.createMilestoneUpgrade(2, 2);
     terms.getDescription = (_) => {
       if (terms.level === 0) {
         return Localization.getUpgradeAddTermDesc("n_2");
@@ -248,6 +237,17 @@ var init = () => {
     terms.canBeRefunded = (_) => unexp.level === 0;
   }
   {
+    unexp = theory.createMilestoneUpgrade(3, 2);
+    unexp.description = Localization.getUpgradeIncCustomExpDesc("U_n", "0.5");
+    unexp.info = Localization.getUpgradeIncCustomExpInfo("U_n", "0.5");
+    unexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
+    unexp.canBeRefunded = (_) => qexp.level === 0 && sterm.level === 0;
+    unexp.boughtOrRefunded = (_) => {
+      theory.invalidatePrimaryEquation();
+      updateAvailability();
+    };
+  }
+  {
     sterm = theory.createMilestoneUpgrade(4, 1);
     sterm.getDescription = () => "$\\text{Adds term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 3}$";
     sterm.getInfo = () => "$\\text{Adds the term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 3}$";
@@ -259,8 +259,8 @@ var init = () => {
   }
   {
     qexp = theory.createMilestoneUpgrade(5, 1);
-    qexp.getDescription = () => "$r_1A(T_nU_n)^{\\log(n)} \\rightarrow  \\sqrt{r1}(T_nU_n)^{\\sqrt[7.5]{T_n}}$";
-    qexp.getInfo = () => "$r_1A(T_nU_n)^{\\log(n)} \\rightarrow  \\sqrt{r1}(T_nU_n)^{\\sqrt[7.5]{T_n}}$";
+    qexp.getDescription = () => "$r_1A(T_nU_n)^{\\log(n)} \\rightarrow  \\sqrt{r_1}(T_nU_n)^{\\sqrt[7.5]{T_n}}$";
+    qexp.getInfo = () => "$r_1A(T_nU_n)^{\\log(n)} \\rightarrow  \\sqrt{r_1}(T_nU_n)^{\\sqrt[7.5]{T_n}}$";
     qexp.boughtOrRefunded = (_) => {
       theory.invalidatePrimaryEquation();
     };
@@ -428,15 +428,15 @@ var getSecondaryEquation = () => {
   return result;
 };
 var getTertiaryEquation = () => {
-  let result = "";
+  let result = "\\begin{matrix}";
   if (stage === 0) {
-    result += "\\begin{matrix}T_n=" + T_n.toString(0);
-    if (fractalTerm.level > 0) result += ",&U_n=" + U_n.toString(0) + "\\end{matrix}";
-    if (fractalTerm.level > 1) result += "\\\\\\ \\begin{matrix}\\qquad\\qquad S_{\\lfloor \\sqrt{n} \\rfloor}=" + S_n.toString(0);
-    result += "\\\\ {}\\end{matrix}";
+    result += "T_n=" + T_n.toString(0);
+    if (fractalTerm.level > 0) result += ",&U_n=" + U_n.toString(0);
+    if (fractalTerm.level > 1) result += "\\\\\\\\ S_{\\lfloor \\sqrt{n} \\rfloor}=" + S_n.toString(0);
   } else {
     result += theory.latexSymbol + "=\\max\\rho^{0.075}";
   }
+  result += "\\\\ {}\\end{matrix}";
   return result;
 };
 var getQuaternaryEntries = () => {
