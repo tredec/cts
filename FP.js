@@ -138,7 +138,7 @@ var init = () => {
   {
     let getDesc = (level) => "s=" + getS(level).toString(2);
     let getInfo = (level) => "s=" + getS(level).toString(2);
-    s = theory.createUpgrade(9, currency, new ExponentialCost(BigNumber.from("1e665"), Math.log2(1e30)));
+    s = theory.createUpgrade(9, currency, new ExponentialCost(BigNumber.from("1e610"), Math.log2(1e30)));
     s.getDescription = (_) => Utils.getMath(getDesc(s.level));
     s.getInfo = (amount) => Utils.getMathTo(getInfo(s.level), getInfo(s.level + amount));
     s.bought = (_) => (updateN_flag = true);
@@ -175,8 +175,6 @@ var init = () => {
         return 450 * 0.075;
       case 9:
         return 550 * 0.075;
-      case 10:
-        return 575 * 0.075;
       case 11:
         return 740 * 0.075;
       default:
@@ -216,7 +214,7 @@ var init = () => {
     fractalTerm.canBeRefunded = () => unexp.level === 0;
   }
   {
-    unexp = theory.createMilestoneUpgrade(2, 3);
+    unexp = theory.createMilestoneUpgrade(2, 2);
     unexp.description = Localization.getUpgradeIncCustomExpDesc("U_n", "0.5");
     unexp.info = Localization.getUpgradeIncCustomExpInfo("U_n", "0.5");
     unexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
@@ -508,10 +506,10 @@ var getN1 = (level) => BigNumber.from(getStepP1Sum(level, 40));
 var getN2 = (level) => BigNumber.from(getStepP1Sum(level, 35));
 var getN3 = (level) => BigNumber.from(getStepP1Sum(level, 30));
 var getS = (level) => {
-  if (level < 18) return BigNumber.from(1 + level * 0.25);
-  if (level < 36) return BigNumber.from(5.5 + (level - 18) * 0.2);
-  if (level < 43) return BigNumber.from(9.1 + (level - 36) * 0.3);
-  return BigNumber.from(11.2 + (level - 43) * 0.1);
+  if (level < 21) return BigNumber.from(1 + level * 0.25);
+  if (level < 36) return BigNumber.from(getS(21).toNumber() + (level - 21) * 0.2);
+  if (level < 43) return BigNumber.from(getS(36).toNumber() + (level - 36) * 0.3);
+  return BigNumber.from(getS(43).toNumber() + (level - 43) * 0.1);
 };
 var getUnexp = (level) => BigNumber.from(5 + level / 2);
 var getTnexp = (level) => BigNumber.from(3 + level);
