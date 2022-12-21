@@ -176,7 +176,7 @@ var init = () => {
       case 9:
         return 550 * 0.075;
       case 10:
-        return 740 * 0.075;
+        return 730 * 0.075;
       default:
         return 1485 * 0.075;
     }
@@ -507,9 +507,9 @@ var getN2 = (level) => BigNumber.from(getStepP1Sum(level, 35));
 var getN3 = (level) => BigNumber.from(getStepP1Sum(level, 30));
 var getS = (level) => {
   if (level < 21) return BigNumber.from(1 + level * 0.25);
-  if (level < 36) return BigNumber.from(getS(20).toNumber() + 0.25 + (level - 21) * 0.2);
-  if (level < 43) return BigNumber.from(getS(35).toNumber() + 0.2 + (level - 36) * 0.3);
-  return BigNumber.from(getS(42).toNumber() + 0.3 + (level - 43) * 0.1);
+  if (level < 37) return BigNumber.from(getS(20).toNumber() + 0.25 + (level - 21) * 0.2);
+  if (level < 44) return BigNumber.from(getS(36).toNumber() + 0.2 + (level - 37) * 0.3);
+  return BigNumber.from(getS(43).toNumber() + 0.3 + (level - 44) * 0.1);
 };
 var getUnexp = (level) => BigNumber.from(5 + level / 2);
 var getTnexp = (level) => BigNumber.from(3 + level);
