@@ -70,7 +70,7 @@ var init = () => {
   // c1
   {
     let getDesc = (level) => "c_1=" + getC1(level).toString(0);
-    c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(2, Math.log2(1.2))));
+    c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(2, Math.log2(1.1342))));
     c1.getDescription = (_) => Utils.getMath(getDesc(c1.level));
     c1.getInfo = (amount) => Utils.getMathTo(getDesc(c1.level), getDesc(c1.level + amount));
   }
@@ -497,7 +497,7 @@ var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.valu
 let getStepP1Sum = (lvl, stepLength) => (((lvl - (lvl % stepLength)) / stepLength - 1) / 2 + 1) * (lvl - (lvl % stepLength)) + (lvl % stepLength) * Math.ceil(lvl / stepLength);
 
 var getTdot = (level) => BigNumber.from(0.2 + level / 5);
-var getC1 = (level) => Utils.getStepwisePowerSum(level, 2, 20, 0);
+var getC1 = (level) => Utils.getStepwisePowerSum(level, 20, 125, 0);
 var getC2 = (level) => BigNumber.TWO.pow(level);
 var getQ1 = (level) => Utils.getStepwisePowerSum(level, 10, 10, 0);
 var getQ2 = (level) => BigNumber.FIVE.pow(level - 5);
