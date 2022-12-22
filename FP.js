@@ -70,7 +70,7 @@ var init = () => {
   // c1
   {
     let getDesc = (level) => "c_1=" + getC1(level).toString(0);
-    c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(2, Math.log2(1.5))));
+    c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(2, Math.log2(1.2))));
     c1.getDescription = (_) => Utils.getMath(getDesc(c1.level));
     c1.getInfo = (amount) => Utils.getMathTo(getDesc(c1.level), getDesc(c1.level + amount));
   }
@@ -79,7 +79,7 @@ var init = () => {
   {
     let getDesc = (level) => "c_2=2^{" + level + "}";
     let getInfo = (level) => "c_2=" + getC2(level).toString(0);
-    c2 = theory.createUpgrade(2, currency, new ExponentialCost(6e5, Math.log2(9.3)));
+    c2 = theory.createUpgrade(2, currency, new ExponentialCost(6e5, Math.log2(29)));
     c2.getDescription = (_) => Utils.getMath(getDesc(c2.level));
     c2.getInfo = (amount) => Utils.getMathTo(getInfo(c2.level), getInfo(c2.level + amount));
   }
@@ -146,7 +146,7 @@ var init = () => {
 
   /////////////////////
   // Permanent Upgrades
-  theory.createPublicationUpgrade(0, currency, 1e9);
+  theory.createPublicationUpgrade(0, currency, 1e10);
   theory.createBuyAllUpgrade(1, currency, 1e12);
   theory.createAutoBuyerUpgrade(2, currency, 1e15);
 
@@ -156,17 +156,17 @@ var init = () => {
   function getMilCustomCost(lvl) {
     switch (lvl) {
       case 0:
-        return 22 * 0.075;
+        return 23 * 0.075;
       case 1:
         return 105 * 0.075;
       case 2:
         return 175 * 0.075;
       case 3:
-        return 200 * 0.075;
+        return 225 * 0.075;
       case 4:
-        return 230 * 0.075;
+        return 250 * 0.075;
       case 5:
-        return 260 * 0.075;
+        return 265 * 0.075;
       case 6:
         return 280 * 0.075;
       case 7:
