@@ -259,8 +259,8 @@ var init = () => {
   }
   {
     qexp = theory.createMilestoneUpgrade(5, 1);
-    qexp.getDescription = () => "$r_1A(T_nU_n)^{\\log(n)} \\rightarrow  \\sqrt{r_1}(T_nU_n)^{\\sqrt[7.5]{T_n}}$";
-    qexp.getInfo = () => "$r_1A(T_nU_n)^{\\log(n)} \\rightarrow  \\sqrt{r_1}(T_nU_n)^{\\sqrt[7.5]{T_n}}$";
+    qexp.getDescription = () => "$\\dot{r} = \\sqrt{r_1}(T_nU_n)^{\\sqrt[7.5]{T_n}}S_{\\lfloor \\sqrt{n} \\rfloor}$";
+    qexp.getInfo = () => "$\\dot{r} = \\sqrt{r_1}(T_nU_n)^{\\sqrt[7.5]{T_n}}S_{\\lfloor \\sqrt{n} \\rfloor}$";
     qexp.boughtOrRefunded = (_) => {
       theory.invalidatePrimaryEquation();
     };
