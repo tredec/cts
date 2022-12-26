@@ -7,7 +7,7 @@ import { Utils } from "./api/Utils";
 var id = "fractal_patterns";
 var name = "Fractal Patterns";
 var description =
-  "A theory that takes advantage of the growth of the 3 fractal patterns:\n Toothpick Sequence (Tₙ),\n Sierpiński triangle (Sₙ),\n Ulam-Warburton cellular automaton (Uₙ).\n\n Big thanks to Gen (Gen#3006) for all the help and suggestions with the LaTeX.";
+  "A theory that takes advantage of the growth of the 3 fractal patterns:\n Toothpick Sequence (Tₙ),\n Sierpiński triangle (Sₙ),\n Ulam-Warburton cellular automaton (Uₙ).\n\n Big thanks to Gen (Gen#3006) and NGZ (NGZ001#3998) for all the help and suggestions with the LaTeX.";
 var authors = "XLII#0042";
 var version = 2.1;
 
