@@ -5,7 +5,7 @@ import { theory, QuaternaryEntry } from "./api/Theory";
 import { Utils } from "./api/Utils";
 
 var id = "fractal_patterns";
-var name = "Fractal Patterns (WIP)";
+var name = "Fractal Patterns";
 var description =
   "A theory that takes advantage of the growth of the 3 fractal patterns:\n Toothpick Sequence (Tₙ),\n Sierpiński triangle (Sₙ),\n Ulam-Warburton cellular automaton (Uₙ).\n\n Big thanks to Gen (Gen#3006) and NGZ (NGZ001#3998) for all the help and suggestions with the LaTeX.";
 var authors = "XLII#0042";
@@ -62,7 +62,7 @@ var init = () => {
   // tvar
   {
     let getDesc = (level) => "\\dot{t}=" + getTdot(level).toString(1);
-    tvar = theory.createUpgrade(0, currency, new ExponentialCost(1e5, Math.log2(1e5)));
+    tvar = theory.createUpgrade(0, currency, new ExponentialCost(1e4, Math.log2(1e4)));
     tvar.getDescription = (_) => Utils.getMath(getDesc(tvar.level));
     tvar.getInfo = (amount) => Utils.getMathTo(getDesc(tvar.level), getDesc(tvar.level + amount));
     tvar.maxLevel = 4;
@@ -70,7 +70,7 @@ var init = () => {
   // c1
   {
     let getDesc = (level) => "c_1=" + getC1(level).toString(0);
-    c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(2, Math.log2(1.1342))));
+    c1 = theory.createUpgrade(1, currency, new FirstFreeCost(new ExponentialCost(2, Math.log2(1.4))));
     c1.getDescription = (_) => Utils.getMath(getDesc(c1.level));
     c1.getInfo = (amount) => Utils.getMathTo(getDesc(c1.level), getDesc(c1.level + amount));
   }
@@ -79,7 +79,7 @@ var init = () => {
   {
     let getDesc = (level) => "c_2=2^{" + level + "}";
     let getInfo = (level) => "c_2=" + getC2(level).toString(0);
-    c2 = theory.createUpgrade(2, currency, new ExponentialCost(6e5, Math.log2(25.685)));
+    c2 = theory.createUpgrade(2, currency, new ExponentialCost(2e5, Math.log2(16.42)));
     c2.getDescription = (_) => Utils.getMath(getDesc(c2.level));
     c2.getInfo = (amount) => Utils.getMathTo(getInfo(c2.level), getInfo(c2.level + amount));
   }
@@ -87,15 +87,15 @@ var init = () => {
   {
     let getDesc = (level) => "q_1=" + getQ1(level).toString(0);
     let getInfo = (level) => "q_1=" + getQ1(level).toString(0);
-    q1 = theory.createUpgrade(3, currency, new FirstFreeCost(new ExponentialCost(1e45, Math.log2(12))));
+    q1 = theory.createUpgrade(3, currency, new FirstFreeCost(new ExponentialCost(1e32, Math.log2(12))));
     q1.getDescription = (_) => Utils.getMath(getDesc(q1.level));
     q1.getInfo = (amount) => Utils.getMathTo(getInfo(q1.level), getInfo(q1.level + amount));
   }
   // q2
   {
-    let getDesc = (level) => "q_2=5^{" + (level - 5) + "}";
-    let getInfo = (level) => "q_2=" + getQ2(level).toString(4);
-    q2 = theory.createUpgrade(4, currency, new ExponentialCost(1e45, Math.log2(4.52e4)));
+    let getDesc = (level) => "q_2=2^{" + level + "}";
+    let getInfo = (level) => "q_2=" + getQ2(level).toString(0);
+    q2 = theory.createUpgrade(4, currency, new ExponentialCost(1e40, Math.log2(1e3)));
     q2.getDescription = (_) => Utils.getMath(getDesc(q2.level));
     q2.getInfo = (amount) => Utils.getMathTo(getInfo(q2.level), getInfo(q2.level + amount));
   }
@@ -103,7 +103,7 @@ var init = () => {
   {
     let getDesc = (level) => "r_1=" + getR1(level).toString(3);
     let getInfo = (level) => "r_1=" + getR1(level).toString(3);
-    r1 = theory.createUpgrade(5, currency, new FirstFreeCost(new ExponentialCost(1e150, Math.log2(15))));
+    r1 = theory.createUpgrade(5, currency, new FirstFreeCost(new ExponentialCost(1e125, Math.log2(15))));
     r1.getDescription = (_) => Utils.getMath(getDesc(r1.level));
     r1.getInfo = (amount) => Utils.getMathTo(getInfo(r1.level), getInfo(r1.level + amount));
   }
@@ -120,7 +120,7 @@ var init = () => {
   {
     let getDesc = (level) => "n_2=" + getN2(level).toString(0);
     let getInfo = (level) => "n_2=" + getN2(level).toString(0);
-    n2 = theory.createUpgrade(7, currency, new ExponentialCost(1e280, Math.log2(4e4)));
+    n2 = theory.createUpgrade(7, currency, new ExponentialCost(1e280, Math.log2(3e4)));
     n2.getDescription = (_) => Utils.getMath(getDesc(n2.level));
     n2.getInfo = (amount) => Utils.getMathTo(getInfo(n2.level), getInfo(n2.level + amount));
     n2.bought = (_) => (updateN_flag = true);
@@ -129,7 +129,7 @@ var init = () => {
   {
     let getDesc = (level) => "n_3=" + getN3(level).toString(0);
     let getInfo = (level) => "n_3=" + getN3(level).toString(0);
-    n3 = theory.createUpgrade(8, currency, new ExponentialCost(1e300, Math.log2(2.2e4)));
+    n3 = theory.createUpgrade(8, currency, new ExponentialCost(BigNumber.from("1e325"), Math.log2(1.8e4)));
     n3.getDescription = (_) => Utils.getMath(getDesc(n3.level));
     n3.getInfo = (amount) => Utils.getMathTo(getInfo(n3.level), getInfo(n3.level + amount));
     n3.bought = (_) => (updateN_flag = true);
@@ -138,7 +138,7 @@ var init = () => {
   {
     let getDesc = (level) => "s=" + getS(level).toString(2);
     let getInfo = (level) => "s=" + getS(level).toString(2);
-    s = theory.createUpgrade(9, currency, new ExponentialCost(BigNumber.from("1e610"), Math.log2(1e30)));
+    s = theory.createUpgrade(9, currency, new ExponentialCost(BigNumber.from("1e790"), Math.log2(1e30)));
     s.getDescription = (_) => Utils.getMath(getDesc(s.level));
     s.getInfo = (amount) => Utils.getMathTo(getInfo(s.level), getInfo(s.level + amount));
     s.bought = (_) => (updateN_flag = true);
@@ -146,7 +146,7 @@ var init = () => {
 
   /////////////////////
   // Permanent Upgrades
-  theory.createPublicationUpgrade(0, currency, 1e10);
+  theory.createPublicationUpgrade(0, currency, 1e9);
   theory.createBuyAllUpgrade(1, currency, 1e12);
   theory.createAutoBuyerUpgrade(2, currency, 1e15);
 
@@ -156,7 +156,7 @@ var init = () => {
   function getMilCustomCost(lvl) {
     switch (lvl) {
       case 0:
-        return 23 * 0.075;
+        return 21 * 0.075;
       case 1:
         return 105 * 0.075;
       case 2:
@@ -166,19 +166,19 @@ var init = () => {
       case 4:
         return 250 * 0.075;
       case 5:
-        return 265 * 0.075;
+        return 275 * 0.075;
       case 6:
-        return 280 * 0.075;
+        return 365 * 0.075;
       case 7:
-        return 400 * 0.075;
-      case 8:
         return 450 * 0.075;
+      case 8:
+        return 600 * 0.075;
       case 9:
-        return 550 * 0.075;
+        return 725 * 0.075;
       case 10:
-        return 730 * 0.075;
+        return 800 * 0.075;
       default:
-        return 1485 * 0.075;
+        return 1460 * 0.075;
     }
   }
   {
@@ -249,8 +249,8 @@ var init = () => {
   }
   {
     sterm = theory.createMilestoneUpgrade(4, 1);
-    sterm.getDescription = () => "$\\text{Adds term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 3}$";
-    sterm.getInfo = () => "$\\text{Adds the term }s\\;\\;\\&\\;\\downarrow\\text{T_n exponent by 3}$";
+    sterm.getDescription = () => "$\\text{Add the term }s\\;\\;\\&\\;\\downarrow T_n\\text{exponent by 2}$";
+    sterm.getInfo = () => "$\\text{Add the term }s\\;\\;\\&\\;\\downarrow T_n\\text{exponent by 2}$";
     sterm.boughtOrRefunded = (_) => {
       updateAvailability();
       theory.invalidatePrimaryEquation();
@@ -259,8 +259,8 @@ var init = () => {
   }
   {
     qexp = theory.createMilestoneUpgrade(5, 1);
-    qexp.getDescription = () => "$\\dot{r} = \\sqrt{r_1}(T_nU_n)^{\\sqrt[7.5]{T_n}}S_{\\lfloor \\sqrt{n} \\rfloor}$";
-    qexp.getInfo = () => "$\\dot{r} = \\sqrt{r_1}(T_nU_n)^{\\sqrt[7.5]{T_n}}S_{\\lfloor \\sqrt{n} \\rfloor}$";
+    qexp.getDescription = () => "$\\dot{r} = r_1(T_nU_n)^{\\log(\\sqrt{2T_n})}S_{\\lfloor \\sqrt{n} \\rfloor}$";
+    qexp.getInfo = () => "$(T_nU_n)\\text{ exponent: } \\log(n) \\rightarrow \\log(\\sqrt{2T_n})$";
     qexp.boughtOrRefunded = (_) => {
       theory.invalidatePrimaryEquation();
     };
@@ -296,6 +296,14 @@ function U(n) {
 }
 function S(n) {
   return BigNumber.THREE.pow(n);
+}
+function t2pk(n) {
+  let precomputed = [
+    1, 3.000000000000001, 11.00000000000001, 42.99999999999992, 171.00000000000162, 683.0000000000389, 2731.0000000000005, 10922.999999999689, 43690.99999999998, 174763.00000063577, 699051.0000001589,
+    2796203.0000000396, 11184811.00000001, 44739243.11111111, 178956970.66666666, 715827882.6666666
+  ];
+  if (n < 16) return BigNumber.from(precomputed[n]);
+  return BigNumber.from(715827882.6666666) * BigNumber.FOUR.pow(n - 15);
 }
 
 function updateN() {
@@ -333,16 +341,16 @@ var tick = (elapsedTime, multiplier) => {
   }
   t_cumulative += getTdot(tvar.level) * dt;
 
-  A = fractalTerm.level > 0 ? BigNumber.from(approx[Math.min(approx.length - 1, Math.floor(Math.log2(n)))] ** -2) : 1;
+  A = fractalTerm.level > 0 ? t2pk(q2.level) : 1;
 
-  qdot = (getQ1(q1.level) * getQ2(q2.level) * A * T_n * U_n.pow(getUnexp(unexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() : 0))) / BigNumber.THOUSAND;
+  qdot = (getQ1(q1.level) * A * T_n * U_n.pow(getUnexp(unexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() : 0))) / BigNumber.THOUSAND;
   q += fractalTerm.level > 0 ? qdot * dt : 0;
 
-  if (qexp.level === 0) rdot = getR1(r1.level) * A * (T_n * U_n).pow(BigNumber.from(Math.log10(n))) * S_n;
-  else rdot = getR1(r1.level).sqrt() * (T_n * U_n).pow(BigNumber.from(T_n ** (1 / 7.5))) * S_n;
+  if (qexp.level === 0) rdot = getR1(r1.level) * (T_n * U_n).pow(BigNumber.from(Math.log10(n))) * S_n;
+  else rdot = getR1(r1.level) * (T_n * U_n).pow(Math.log10(U_n * 2) / 2) * S_n;
   r += fractalTerm.level > 1 ? rdot * dt : 0;
 
-  rhodot = bonus * getC1(c1.level) * getC2(c2.level) * A * T_n.pow(getTnexp(tnexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() - 3 : 0)) * t_cumulative;
+  rhodot = bonus * getC1(c1.level) * getC2(c2.level) * T_n.pow(getTnexp(tnexp.level) + (sterm.level > 0 ? getS(s.level).toNumber() - 2 : 0)) * t_cumulative;
   rhodot *= fractalTerm.level > 0 ? q : 1;
   rhodot *= fractalTerm.level > 1 ? r : 1;
 
@@ -395,15 +403,15 @@ var getPrimaryEquation = () => {
     theory.primaryEquationHeight = fractalTerm.level === 0 ? 60 : 110;
     theory.primaryEquationScale = fractalTerm.level === 0 ? 1 : 0.9;
     let result = `\\dot{\\rho} = c_1c_2`;
-    if (fractalTerm.level > 0) result += "A";
     if (fractalTerm.level > 0) result += "q" + (fractalTerm.level > 1 ? "r" : "");
     result += "t";
     let TnexpIsInt = (getTnexp(tnexp.level) - (sterm.level > 0 ? 3 : 0)).toNumber() % 1 < 0.0001;
     result += `T_n^{${(getTnexp(tnexp.level) - (sterm.level > 0 ? 3 : 0)).toString(TnexpIsInt ? 0 : 1) + (sterm.level > 0 ? "+s" : "")}}`;
-    if (fractalTerm.level > 0) result += `\\\\\\\\ \\dot{q} = q_1q_2AT_nU_n^{${getUnexp(unexp.level).toString(0) + (sterm.level > 0 ? "+s" : "")}}/1000`;
+    if (fractalTerm.level > 0) result += `\\\\\\\\ \\dot{q} = q_1AT_nU_n^{${getUnexp(unexp.level).toString(0) + (sterm.level > 0 ? "+s" : "")}}/1000`;
     if (fractalTerm.level > 1) {
-      if (qexp.level === 0) result += `\\\\\\\\ \\dot{r} = r_1A(T_nU_n)^{\\log(n)}S_{\\lfloor \\sqrt{n} \\rfloor}`;
-      else result += `\\\\\\\\ \\dot{r} = \\sqrt{r_1}(T_nU_n)^{\\sqrt[7.5]{T_n}}S_{\\lfloor \\sqrt{n} \\rfloor}`;
+      if (qexp.level === 0) result += `\\\\\\\\ \\dot{r} = r_1(T_nU_n)^{\\log(n)}S_{\\lfloor \\sqrt{n} \\rfloor}`;
+      // else result += `\\\\\\\\ \\dot{r} = r_1(T_nU_n)^{\\frac{\\log(2T_n)}{2}}S_{\\lfloor \\sqrt{n} \\rfloor}`;
+      else result += `\\\\\\\\ \\dot{r} = r_1(T_nU_n)^{\\log(\\sqrt{2T_n})}S_{\\lfloor \\sqrt{n} \\rfloor}`;
     }
     return result;
   }
@@ -412,18 +420,18 @@ var getPrimaryEquation = () => {
 var getSecondaryEquation = () => {
   if (stage === 0) return "";
   theory.secondaryEquationHeight = 60;
-  theory.secondaryEquationScale = 0.95;
+  theory.secondaryEquationScale = 0.85;
   let result = "\\begin{matrix}";
   result += "n = 1+n_1";
   if (terms.level > 0) {
     result += "+n_2";
-    theory.secondaryEquationScale = 0.9;
+    theory.secondaryEquationScale = 0.93;
   }
   if (terms.level > 1) {
     result += "+n_3";
-    theory.secondaryEquationScale = 0.8;
+    theory.secondaryEquationScale = 0.83;
   }
-  if (fractalTerm.level > 0) result += `,& A = min(2-U_n/T_n)  ^{-2}`;
+  if (fractalTerm.level > 0) result += `,& A = (2-U_{q_2}/T_{q_2})^{-1}`;
   result += "\\\\ {}\\end{matrix}";
   return result;
 };
@@ -488,8 +496,8 @@ var goToNextStage = () => {
   theory.invalidateQuaternaryValues();
 };
 
-var getPublicationMultiplier = (tau) => tau.pow(1.327) * BigNumber.FIVE;
-var getPublicationMultiplierFormula = (symbol) => "5" + symbol + "^{1.327}";
+var getPublicationMultiplier = (tau) => tau.pow(1.324) * BigNumber.FIVE;
+var getPublicationMultiplierFormula = (symbol) => "5" + symbol + "^{1.324}";
 var getTau = () => currency.value.pow(0.075);
 var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(1 / 0.075), currency.symbol];
 var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.value.abs()).log10().toNumber();
@@ -497,19 +505,18 @@ var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.valu
 let getStepP1Sum = (lvl, stepLength) => (((lvl - (lvl % stepLength)) / stepLength - 1) / 2 + 1) * (lvl - (lvl % stepLength)) + (lvl % stepLength) * Math.ceil(lvl / stepLength);
 
 var getTdot = (level) => BigNumber.from(0.2 + level / 5);
-var getC1 = (level) => Utils.getStepwisePowerSum(level, 100, 200, 0);
+var getC1 = (level) => Utils.getStepwisePowerSum(level, 150, 100, 0);
 var getC2 = (level) => BigNumber.TWO.pow(level);
 var getQ1 = (level) => Utils.getStepwisePowerSum(level, 10, 10, 0);
-var getQ2 = (level) => BigNumber.FIVE.pow(level - 5);
+var getQ2 = (level) => BigNumber.TWO.pow(level);
 var getR1 = (level) => (level === 0 ? BigNumber.ZERO : Utils.getStepwisePowerSum(level, 2, 4, 0) / BigNumber.from(1 + 1000 / level ** 2));
 var getN1 = (level) => BigNumber.from(getStepP1Sum(level, 40));
 var getN2 = (level) => BigNumber.from(getStepP1Sum(level, 35));
 var getN3 = (level) => BigNumber.from(getStepP1Sum(level, 30));
 var getS = (level) => {
-  if (level < 21) return BigNumber.from(1 + level * 0.25);
-  if (level < 37) return BigNumber.from(getS(20).toNumber() + 0.25 + (level - 21) * 0.2);
-  if (level < 44) return BigNumber.from(getS(36).toNumber() + 0.2 + (level - 37) * 0.3);
-  return BigNumber.from(getS(43).toNumber() + 0.3 + (level - 44) * 0.1);
+  if (level < 28) return BigNumber.from(1 + level * 0.15);
+  if (level < 36) return BigNumber.from(getS(27).toNumber() + 0.15 + (level - 28) * 0.2);
+  return BigNumber.from(getS(35).toNumber() + 0.2 + (level - 36) * 0.15);
 };
 var getUnexp = (level) => BigNumber.from(5 + level / 2);
 var getTnexp = (level) => BigNumber.from(3 + level);
