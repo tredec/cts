@@ -172,10 +172,14 @@ var init = () => {
       case 7:
         return 450 * 0.075;
       case 8:
-        return 600 * 0.075;
+        return 575 * 0.075;
       case 9:
-        return 725 * 0.075;
+        return 640 * 0.075;
       case 10:
+        return 700 * 0.075;
+      case 11:
+        return 725 * 0.075;
+      case 12:
         return 800 * 0.075;
       default:
         return 1460 * 0.075;
@@ -237,9 +241,9 @@ var init = () => {
     terms.canBeRefunded = (_) => unexp.level === 0;
   }
   {
-    unexp = theory.createMilestoneUpgrade(3, 2);
-    unexp.description = Localization.getUpgradeIncCustomExpDesc("U_n", "0.5");
-    unexp.info = Localization.getUpgradeIncCustomExpInfo("U_n", "0.5");
+    unexp = theory.createMilestoneUpgrade(3, 4);
+    unexp.description = Localization.getUpgradeIncCustomExpDesc("U_n", "0.25");
+    unexp.info = Localization.getUpgradeIncCustomExpInfo("U_n", "0.25");
     unexp.boughtOrRefunded = (_) => theory.invalidatePrimaryEquation();
     unexp.canBeRefunded = (_) => qexp.level === 0 && sterm.level === 0;
     unexp.boughtOrRefunded = (_) => {
@@ -321,7 +325,7 @@ var updateAvailability = () => {
   s.isAvailable = sterm.level > 0;
   terms.isAvailable = tnexp.level === 4;
   unexp.isAvailable = fractalTerm.level > 1 && terms.level === 2;
-  sterm.isAvailable = unexp.level === 2;
+  sterm.isAvailable = unexp.level === 4;
   qexp.isAvailable = sterm.level === 1;
 };
 
@@ -518,7 +522,7 @@ var getS = (level) => {
   if (level < 36) return BigNumber.from(getS(27).toNumber() + 0.15 + (level - 28) * 0.2);
   return BigNumber.from(getS(35).toNumber() + 0.2 + (level - 36) * 0.15);
 };
-var getUnexp = (level) => BigNumber.from(5 + level / 2);
+var getUnexp = (level) => BigNumber.from(5 + level / 4);
 var getTnexp = (level) => BigNumber.from(3 + level);
 
 init();
