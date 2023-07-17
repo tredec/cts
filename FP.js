@@ -84,7 +84,7 @@ var init = () => {
   {
     let getDesc = (level) => "c_2=2^{" + level + "}";
     let getInfo = (level) => "c_2=" + getC2(level).toString(0);
-    c2 = theory.createUpgrade(2, currency, new CompositeCost(15, new ExponentialCost(1e15, Math.log2(40)), new ExponentialCost(1e41, Math.log2(16.42))));
+    c2 = theory.createUpgrade(2, currency, new CompositeCost(15, new ExponentialCost(1e15, Math.log2(40)), new ExponentialCost(1e37, Math.log2(16.42))));
     c2.getDescription = (_) => Utils.getMath(getDesc(c2.level));
     c2.getInfo = (amount) => Utils.getMathTo(getInfo(c2.level), getInfo(c2.level + amount));
   }
@@ -111,7 +111,7 @@ var init = () => {
     r1 = theory.createUpgrade(
       5,
       currency,
-      new CompositeCost(285, new FirstFreeCost(new ExponentialCost(1e75, Math.log2(20))), new FirstFreeCost(new ExponentialCost(BigNumber.from("1e440"), Math.log2(150))))
+      new CompositeCost(285, new FirstFreeCost(new ExponentialCost(1e80, Math.log2(25))), new FirstFreeCost(new ExponentialCost(BigNumber.from("1e480"), Math.log2(150))))
     );
     r1.getDescription = (_) => Utils.getMath(getDesc(r1.level));
     r1.getInfo = (amount) => Utils.getMathTo(getInfo(r1.level), getInfo(r1.level + amount));
@@ -145,7 +145,7 @@ var init = () => {
   //// Milestone Upgrades
   theory.setMilestoneCost(new CustomCost((total) => BigNumber.from(getMilCustomCost(total))));
   function getMilCustomCost(lvl) {
-    const unlocks = [23, 90, 175, 300, 385, 420, 550, 600, 700, 1500];
+    const unlocks = [Math.log10(5e22), 95, 175, 300, 385, 420, 550, 600, 700, 1500];
     return unlocks[Math.min(lvl, unlocks.length - 1)] * 0.075;
   }
   {
@@ -470,7 +470,7 @@ var getN1 = (level) => {
   return BigNumber.from(1 + stepwiseSum(level, 1, 40) + term2 + term3);
 };
 var getS = (level) => {
-  let cutoffs = [32, 38];
+  let cutoffs = [32, 39];
   if (level < cutoffs[0]) return BigNumber.from(1 + level * 0.15);
   if (level < cutoffs[1]) return BigNumber.from(getS(cutoffs[0] - 1) + 0.15 + (level - cutoffs[0]) * 0.2);
   return BigNumber.from(getS(cutoffs[1] - 1) + 0.2 + (level - cutoffs[1]) * 0.15);
