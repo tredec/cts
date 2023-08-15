@@ -145,6 +145,7 @@ var init = () => {
   //// Milestone Upgrades
   theory.setMilestoneCost(new CustomCost((total) => BigNumber.from(getMilCustomCost(total))));
   function getMilCustomCost(lvl) {
+    return 0;
     const unlocks = [Math.log10(5e22), 95, 175, 300, 385, 420, 550, 600, 700, 1500];
     return unlocks[Math.min(lvl, unlocks.length - 1)] * 0.075;
   }
