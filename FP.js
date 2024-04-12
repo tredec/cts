@@ -12,7 +12,7 @@ var authors = "xlii";
 var version = 6;
 var releaseOrder = "6";
 
-requiresGameVersion("1.4.33");
+requiresGameVersion("1.4.32");
 
 var tauMultiplier = 4;
 
