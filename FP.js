@@ -9,7 +9,12 @@ var name = "Fractal Patterns";
 var description =
   "A theory that takes advantage of the growth of the 3 fractal patterns:\n Toothpick Sequence (Tₙ),\n Ulam-Warburton cellular automaton (Uₙ),\n Sierpiński triangle (Sₙ).\n\n Big thanks to Gen (gen1code) and NGZ (ngz001) for all the help and suggestions with the LaTeX.";
 var authors = "xlii";
-var version = 2.2;
+var version = 6;
+var releaseOrder = "6";
+
+requiresGameVersion("1.4.33");
+
+var tauMultiplier = 4;
 
 var currency = BigNumber.ZERO;
 var quaternaryEntries;
@@ -143,7 +148,7 @@ var init = () => {
 
   ///////////////////////
   //// Milestone Upgrades
-  theory.setMilestoneCost(new CustomCost((total) => BigNumber.from(getMilCustomCost(total))));
+  theory.setMilestoneCost(new CustomCost((total) => BigNumber.from(tauMultiplier*getMilCustomCost(total))));
   function getMilCustomCost(lvl) {
     const unlocks = [Math.log10(5e22), 95, 175, 300, 385, 420, 550, 600, 700, 1500];
     return unlocks[Math.min(lvl, unlocks.length - 1)] * 0.075;
@@ -168,7 +173,7 @@ var init = () => {
       updateAvailability();
       quaternaryEntries = [];
     };
-    fractalTerm.canBeRefunded = () => snexp.level === 0;
+    fractalTerm.canBeRefunded = () => nboost.level === 0;
   }
   {
     nboost = theory.createMilestoneUpgrade(2, 2);
@@ -250,8 +255,8 @@ function wt(n) {
 }
 function U(n) {
   let p = n - (n % 100);
-  let temp = prevN > p ? U_n.toNumber() : un_precomputed[Math.floor(n / 100)];
-  for (let i = prevN > p ? prevN + 1 : p + 1; i <= n; i++) temp += u(i);
+  let temp = un_precomputed[Math.floor(n / 100)];
+  for (let i = p + 1; i <= n; i++) temp += u(i);
   return temp;
 }
 function S(n) {
@@ -315,6 +320,9 @@ var tick = (elapsedTime, multiplier) => {
 
   theory.invalidateTertiaryEquation();
   theory.invalidateQuaternaryValues();
+
+  // if (!game.isCalculatingOfflineProgress)
+  //   updateBackgroundImage(elapsedTime);
 };
 
 var postPublish = () => {
@@ -390,7 +398,7 @@ var getTertiaryEquation = () => {
     if (fractalTerm.level > 0) result += ",&U_n=" + U_n.toString(0);
     if (fractalTerm.level > 1) result += "\\\\\\\\ S_{\\lfloor \\sqrt{n} \\rfloor}=" + S_n.toString(0);
   } else {
-    result += theory.latexSymbol + "=\\max\\rho^{0.075}";
+    result += theory.latexSymbol + "=\\max\\rho^{0.3}";
   }
   result += "\\\\ {}\\end{matrix}";
   return result;
@@ -398,29 +406,31 @@ var getTertiaryEquation = () => {
 var getQuaternaryEntries = () => {
   // log(JSON.stringify(quaternaryEntries))
   if (quaternaryEntries.length == 0) {
+    quaternaryEntries.push(new QuaternaryEntry(null, ''));
     quaternaryEntries.push(new QuaternaryEntry("n", null));
     if (stage === 0) {
-      if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("\\dot{q}", null));
-      if (fractalTerm.level > 1) quaternaryEntries.push(new QuaternaryEntry("\\dot{r}", null));
-      quaternaryEntries.push(new QuaternaryEntry("\\dot{\\rho}", null));
+      if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("\\dot{q}_{{}\\,}", null));
+      if (fractalTerm.level > 1) quaternaryEntries.push(new QuaternaryEntry("\\dot{r}_{{}\\,}", null));
+      quaternaryEntries.push(new QuaternaryEntry("\\dot{\\rho}_{{}\\,}", null));
     } else {
-      quaternaryEntries.push(new QuaternaryEntry("t", null));
+      quaternaryEntries.push(new QuaternaryEntry("t_{{}\\,}", null));
       if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("q", null));
       if (fractalTerm.level > 1) quaternaryEntries.push(new QuaternaryEntry("r", null));
-      if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("A", null));
+      if (fractalTerm.level > 0) quaternaryEntries.push(new QuaternaryEntry("A_{{}\\,}", null));
     }
+    quaternaryEntries.push(new QuaternaryEntry(null, ''));
   }
 
-  quaternaryEntries[0].value = BigNumber.from(n).toString(0);
+  quaternaryEntries[1].value = BigNumber.from(n).toString(0);
   if (stage === 0) {
-    if (fractalTerm.level > 0) quaternaryEntries[1].value = (adBoost * qdot).toString(3);
-    if (fractalTerm.level > 1) quaternaryEntries[2].value = (adBoost * rdot).toString(3);
-    quaternaryEntries[fractalTerm.level + 1].value = (adBoost * rhodot).toString(3);
+    if (fractalTerm.level > 0) quaternaryEntries[2].value = (adBoost * qdot).toString(3);
+    if (fractalTerm.level > 1) quaternaryEntries[3].value = (adBoost * rdot).toString(3);
+    quaternaryEntries[fractalTerm.level + 2].value = (adBoost * rhodot).toString(3);
   } else {
-    quaternaryEntries[1].value = t_cumulative.toString(2);
-    if (fractalTerm.level > 0) quaternaryEntries[2].value = q.toString(2);
-    if (fractalTerm.level > 1) quaternaryEntries[3].value = r.toString(2);
-    if (fractalTerm.level > 0) quaternaryEntries[fractalTerm.level > 1 ? 4 : 3].value = A.toString(2);
+    quaternaryEntries[2].value = t_cumulative.toString(2);
+    if (fractalTerm.level > 0) quaternaryEntries[3].value = q.toString(2);
+    if (fractalTerm.level > 1) quaternaryEntries[4].value = r.toString(2);
+    if (fractalTerm.level > 0) quaternaryEntries[fractalTerm.level > 1 ? 5 : 4].value = A.toString(2);
   }
 
   return quaternaryEntries;
@@ -444,10 +454,10 @@ var goToNextStage = () => {
   theory.invalidateQuaternaryValues();
 };
 
-var getPublicationMultiplier = (tau) => tau.pow(1.324) * BigNumber.FIVE;
-var getPublicationMultiplierFormula = (symbol) => "5" + symbol + "^{1.324}";
-var getTau = () => currency.value.pow(0.075);
-var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(1 / 0.075), currency.symbol];
+var getPublicationMultiplier = (tau) => tau.pow(1.324/tauMultiplier) * BigNumber.FIVE;
+var getPublicationMultiplierFormula = (symbol) => "5" + symbol + "^{0.331}";
+var getTau = () => currency.value.pow(0.075*tauMultiplier);
+var getCurrencyFromTau = (tau) => [tau.max(BigNumber.ONE).pow(1 / (0.075*tauMultiplier)), currency.symbol];
 var get2DGraphValue = () => currency.value.sign * (BigNumber.ONE + currency.value.abs()).log10().toNumber();
 
 let stepwiseSum = (level, base, length) => {
@@ -476,5 +486,64 @@ var getS = (level) => {
   return BigNumber.from(getS(cutoffs[1] - 1) + 0.2 + (level - cutoffs[1]) * 0.15);
 };
 var getsnexp = (level) => BigNumber.from(1 + level * 0.6);
+
+// var lastTheme = null;
+// var backgroundImages = [ui.createImage({scale: 0.75, opacity: 0}) , ui.createImage({scale: 0.75, opacity: 0}) , ui.createImage({scale: 0.75, opacity: 0})];
+// var backgroundIndex = backgroundImages.length - 1;
+// var backgroundTime = 0;
+// var backgroundDisplayTime = 10;
+// var backgroundTransitionTime = 2;
+// var backgroundInitialized = false;
+
+// var fadeBackground = (image, opacity) => {
+//   if (image.opacity != opacity)
+//     image.fadeTo(opacity, backgroundTransitionTime * 1000, Easing.LINEAR);
+// }
+
+// var updateBackgroundImage = (elapsedTime) => {
+//   if (lastTheme != game.settings.theme) {
+//     if (game.settings.theme == Theme.LIGHT)
+//       backgroundImages[0].source = ImageSource.fromUri("https://github.com/conicgames/custom-theories/blob/main/assets/FractalPatternToothpickSequenceLight.png?raw=true");
+//     else
+//       backgroundImages[0].source = ImageSource.fromUri("https://github.com/conicgames/custom-theories/blob/main/assets/FractalPatternToothpickSequence.png?raw=true");
+    
+//     if (game.settings.theme == Theme.LIGHT)
+//       backgroundImages[1].source = ImageSource.fromUri("https://github.com/conicgames/custom-theories/blob/main/assets/FractalPatternUlamWarburtonLight.png?raw=true");
+//     else
+//       backgroundImages[1].source = ImageSource.fromUri("https://github.com/conicgames/custom-theories/blob/main/assets/FractalPatternUlamWarburton.png?raw=true");
+    
+//     if (game.settings.theme == Theme.LIGHT)
+//       backgroundImages[2].source = ImageSource.fromUri("https://github.com/conicgames/custom-theories/blob/main/assets/FractalPatternSierpinskiTriangleLight.png?raw=true");
+//     else
+//       backgroundImages[2].source = ImageSource.fromUri("https://github.com/conicgames/custom-theories/blob/main/assets/FractalPatternSierpinskiTriangle.png?raw=true");
+
+//     lastTheme = game.settings.theme;
+//   }
+
+//   backgroundTime += elapsedTime;
+//   var nextIndex = null;
+
+//   if (backgroundIndex > fractalTerm.length || !backgroundInitialized && backgroundTime > 2)
+//     nextIndex = 0;
+
+//   if (backgroundTime > backgroundDisplayTime)
+//     nextIndex = (backgroundIndex + 1) % Math.min(fractalTerm.level + 1, backgroundImages.length);
+
+//   if (nextIndex != null) {
+//     if (backgroundIndex != nextIndex)
+//       fadeBackground(backgroundImages[backgroundIndex], 0);
+
+//     backgroundIndex = nextIndex;
+//     fadeBackground(backgroundImages[backgroundIndex], 1);
+//     backgroundTime = 0;
+//     backgroundInitialized = true;
+//   }
+// }
+
+// var getEquationUnderlay = () => {
+//   return ui.createGrid({
+//     children: backgroundImages
+//   });
+// }
 
 init();
